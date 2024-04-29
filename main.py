@@ -23,30 +23,30 @@ async def on_ready():
     synced = await bot.tree.sync()
     print(f"Synced {len(synced)} command(s)")
 
-@bot.tree.command(name="help", description="help")
+@bot.tree.command(name="help", description="Afficher l'aide du bot TeamTracker")
 async def helpme(interaction):
     await interaction.response.send_message(f"Aide TeamTracker \n\nCommandes : \n**/helpme ** : Afficher aide bot TT \n**/ping ** : Ping TT \n**/define @MentionDiscord NomUtilisateurRiot Region ** : Ajouter utilisateur discord dans TT \n**/display ** : Afficher utilisateur TT \n**/erase ** : Effacer mémoire TT \n**/stats @MentionDiscord ** : Afficher stats actuelles mention Discord ")
 
-@bot.tree.command(name="ping", description="ping")
+@bot.tree.command(name="ping", description="Effectuer un ping vers le bot TeamTracker")
 async def ping(interaction):
   await interaction.response.send_message(f"TftTracker est bien opérationnel !")
 
-@bot.tree.command(name="define", description="description")
+@bot.tree.command(name="define", description="Ajouter un utilisateur Discord à TeamTracker")
 async def define(interaction, member: discord.Member, riot_name: str, region: str):
     user_data[member.id] = {"riot_name": riot_name, "region": region}
     await interaction.response.send_message(f"{member.display_name} : Riot username = {riot_name}; Region = {region}")
 
-@bot.tree.command(name="display", description="display")
+@bot.tree.command(name="display", description="Afficher les données de TeamTracker")
 async def display(interaction):
     await interaction.response.send_message(user_data)
 
-@bot.tree.command(name="erase", description="erase")
+@bot.tree.command(name="erase", description="Effacer les données de TeamTracker (DEBUG)")
 async def erase(interaction):
     global user_data
     await interaction.response.send_message(f"Mémoire effacée !")
     user_data = {}
 
-@bot.tree.command(name="stats", description="stats")
+@bot.tree.command(name="stats", description="Afficher les statistiques générales de la mention")
 async def stats(interaction, member: discord.Member):
     if member.id in user_data:
         data = user_data[member.id]
