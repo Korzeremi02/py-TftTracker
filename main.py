@@ -20,83 +20,141 @@ user_data = {}
 user_profile = {}
 
 @bot.event
-async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="/help"))
-    # autoTracker.start()
-    synced = await bot.tree.sync()
-    print(f"Synchronisation de {len(synced)} commandes")
+async def on_ready(interaction):
+    try:
+        await bot.change_presence(activity=discord.Game(name="/help"))
+        # autoTracker.start()
+        synced = await bot.tree.sync()
+        print(f"Synchronisation de {len(synced)} commandes")
+    except:
+        await interaction.reponse.send_message(f"Erreur lors du démarrage du bot")
 
 @bot.tree.command(name="help", description="Afficher l'aide du bot TeamTracker")
 async def helpme(interaction):
-    await interaction.response.send_message(f"Aide TeamTracker \n\nCommandes : \n**/helpme ** : Afficher aide bot TT \n**/ping ** : Ping TT \n**/define ** : Ajouter utilisateur discord dans TT \n**/display ** : Afficher utilisateur TT \n**/erase ** : Effacer mémoire TT \n**/infos** : Afficher stats actuelles mention Discord ")
+    try:
+        await interaction.response.send_message(f"Aide TeamTracker \n\nCommandes : \n**/helpme ** : Afficher aide bot TT \n**/ping ** : Ping TT \n**/define ** : Ajouter utilisateur discord dans TT \n**/display ** : Afficher utilisateur TT \n**/erase ** : Effacer mémoire TT \n**/infos** : Afficher stats actuelles mention Discord ")
+    except:
+        await interaction.response.send_message(f"Erreur lors de l'affichage de l'aide")
 
 @bot.tree.command(name="ping", description="Effectuer un ping vers le bot TeamTracker")
 async def ping(interaction):
-  await interaction.response.send_message(f"TftTracker est bien opérationnel !")
+    try:
+        await interaction.response.send_message(f"TftTracker est bien opérationnel !")
+    except:
+        await interaction.response.send_message(f"Erreur lors du ping")
 
 @bot.tree.command(name="define", description="Ajouter un utilisateur Discord à TeamTracker")
 async def define(interaction, member: discord.Member, riot_name: str, tag: str, region: str, status: bool):
-    global user_secret
-    user_data[member.id] = {"riot_name": riot_name, "tag": tag, "region": region, "status": status}
-    puid = 'https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/' + riot_name + "/" + tag + '?api_key=' + riot_key
-    res = requests.get(puid, timeout = 127)
-    user_secret[member.id] = [dict(res.json())]
-    puid = user_secret[member.id][0]['puuid']
-    id = 'https://euw1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/' + puid + '?api_key=' + riot_key
-    res2 = requests.get(id, timeout=127)
-    user_id[member.id] = [dict(res2.json())]
-    username = member.name
-    user_id[member.id][0]["discord_member"] = username
-    user_secret = {}
-    await interaction.response.send_message(f"Id du membre Discord : {member.display_name} \nRiot username = {riot_name}\nTag = {tag}\nRegion = {region}\nStatus = {status}")
+    try:
+        global user_secret
+        user_data[member.id] = {"riot_name": riot_name, "tag": tag, "region": region, "status": status}
+        try:
+            puid = 'https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/' + riot_name + "/" + tag + '?api_key=' + riot_key
+            res = requests.get(puid, timeout = 127)
+            user_secret[member.id] = [dict(res.json())]
+        except:
+            interaction.response.send_message(f"Erreur lors de la requete API pour user_secret")
+        try:
+            puid = user_secret[member.id][0]['puuid']
+        except:
+            interaction.response.send_message(f"Erreur lors de la manipulation du PUUID RIOT")
+        try:
+            id = 'https://euw1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/' + puid + '?api_key=' + riot_key
+            res2 = requests.get(id, timeout=127)
+            user_id[member.id] = [dict(res2.json())]
+        except:
+            interaction.response.send_message(f"Erreur lors de la requete API pour user_id")
+        try:
+            username = member.name
+            user_id[member.id][0]["discord_member"] = username
+        except:
+            interaction.response.send_message(f"Erreur lors de l'ajout du nom utilisateur Discord dans user_id")
+        try:
+            user_secret = {}
+        except:
+            interaction.response.send_message(f"Erreur lors de la suppression de la lib user_secret")
+        try:
+            await interaction.response.send_message(f"Id du membre Discord : {member.display_name} \nRiot username = {riot_name}\nTag = {tag}\nRegion = {region}\nStatus = {status}")
+        except:
+            interaction.response.send_message("Erreur lors de l'envoie du message de la commande define")
+    except:
+        interaction.response.send_message("Erreur majeure lors de l'ajout de la mention Discord")
 
 @bot.tree.command(name="showsecret", description="show")
 async def showsecret(interaction):
-    await interaction.response.send_message(user_secret)
+    try:
+        await interaction.response.send_message(user_secret)
+    except:
+        interaction.response.send_message(f"Erreur lors de l'affichage de user_secret")
 
-@bot.tree.command(name="display", description="Afficher les données de TeamTracker")
+@bot.tree.command(name="display", description="Afficher les données de TftTracker")
 async def display(interaction):
-    await interaction.response.send_message(user_data)
+    try:
+        await interaction.response.send_message(user_data)
+    except:
+        interaction.response.send_message("Erreur lors de l'affichage des données avec cmd display")
 
 @bot.tree.command(name="erase", description="Effacer les données de TeamTracker (DEBUG)")
 async def erase(interaction):
-    global user_data
-    await interaction.response.send_message(f"Mémoire effacée !")
-    user_data = {}
+    try:
+        global user_data
+        await interaction.response.send_message(f"Mémoire effacée !")
+        user_data = {}
+    except:
+        interaction.response.send_message("Erreur lors de la suppresion de user_data")
 
 @bot.tree.command(name="infos", description="Afficher les statistiques générales de la mention")
 async def infos(interaction, member: discord.Member):
-    id = user_id[member.id][0]['id']
-    profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
-    res = requests.get(profile_data, timeout=127)
-    user_profile = res.json()
-    for item in user_profile:
-        temp_dict = {
-            "queueType": item["queueType"],
-            "tier": item["tier"],
-            "rank": item["rank"],
-            "leaguePoints": item["leaguePoints"],
-            "wins": item["wins"],
-            "losses": item["losses"]
-        }
-    await interaction.response.send_message(temp_dict)
+    try:
+        try:
+            id = user_id[member.id][0]['id']
+        except:
+            interaction.response.send_message(f"Erreur lors de la définition de l'ID")
+        try:
+            profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
+            res = requests.get(profile_data, timeout=127)
+            user_profile = res.json()
+        except:
+            interaction.response.send_message(f"Erreur lors de la requete API pour la récupération et/ou l'affichage des infos")
+        for item in user_profile:
+            temp_dict = {
+                "queueType": item["queueType"],
+                "tier": item["tier"],
+                "rank": item["rank"],
+                "leaguePoints": item["leaguePoints"],
+                "wins": item["wins"],
+                "losses": item["losses"]
+            }
+        await interaction.response.send_message(temp_dict)
+    except:
+        interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
 
 @bot.tree.command(name="infosdoubleup", description="Afficher les statistiques générales de la mention")
 async def infosdoubleup(interaction, member: discord.Member):
-    id = user_id[member.id][0]['id']
-    profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
-    res = requests.get(profile_data, timeout=127)
-    user_profile = res.json()
-    for item in user_profile:
-        temp_dict = {
-            "queueType": item["queueType"],
-            "tier": item["tier"],
-            "rank": item["rank"],
-            "leaguePoints": item["leaguePoints"],
-            "wins": item["wins"],
-            "losses": item["losses"]
-        }
-        await interaction.response.send_message(temp_dict)
+    try:
+        try:
+            id = user_id[member.id][0]['id']
+        except:
+            interaction.response.send_message(f"Erreur lors de la définition de l'ID")
+        try:
+            profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
+            res = requests.get(profile_data, timeout=127)
+            user_profile = res.json()
+        except:
+            interaction.response.send_message(f"Erreur lors de la requete API pour la récupération et/ou l'affichage des infos")
+        for item in user_profile:
+            temp_dict = {
+                "queueType": item["queueType"],
+                "tier": item["tier"],
+                "rank": item["rank"],
+                "leaguePoints": item["leaguePoints"],
+                "wins": item["wins"],
+                "losses": item["losses"]
+            }
+            await interaction.response.send_message(temp_dict)
+    except:
+        interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
+
 
 # @bot.tree.command(name="ingame", description="Voir les joueurs ingame")
 # async def ingame(interaction):
