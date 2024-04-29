@@ -114,16 +114,32 @@ async def ladder(interaction):
         profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
         res = requests.get(profile_data, timeout=127)
         user_profile = res.json()
+        print(user_profile)
 
         temp = []
         temp.append(str(user_id[list(user_id.keys())[compt]][0]["discord_member"]).capitalize())
-        temp.append(user_profile[1]['tier'])
-        temp.append(user_profile[1]['rank'])
-        temp.append(user_profile[1]['leaguePoints'])
+        temp.append(str(user_profile[-1]['tier']))
+        temp.append(str(user_profile[-1]['rank']))
+        temp.append(str(user_profile[-1]['leaguePoints']) + " LP")
         ladder.append(temp)
         compt += 1
 
-    await interaction.response.send_message(ladder)
+
+    division_order = {'CHALLENGER': 10, 'GRANDMASTER': 9, 'MASTER': 8, 'DIAMOND': 7, 'EMERALD': 6, 'PLATINUM': 5, 'GOLD': 4, 'SILVER': 3, 'BRONZE': 2, 'IRON': 1}
+
+    def custom_sort(player):
+        division_rank = division_order.get(player[1], 0)
+        division_level = {'I': 4, 'II': 3, 'III': 2, 'IV': 1}.get(player[2], 0)
+        lp = int(player[3].split()[0])
+        return (division_rank, division_level, lp)
+
+    sorted_ladder = sorted(ladder, key=custom_sort, reverse=True)
+
+    # # for player in sorted_ladder:
+    # #     print(player)
+
+
+    await interaction.response.send_message(sorted_ladder)
 
 
 # @tasks.loop(seconds = 60)
