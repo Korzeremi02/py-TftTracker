@@ -96,6 +96,31 @@ async def infosdoubleup(interaction, member: discord.Member):
         }
         await interaction.response.send_message(temp_dict)
 
+# @bot.tree.command(name="ingame", description="Voir les joueurs ingame")
+# async def ingame(interaction):
+#     ladder = []
+#     for i in range(len(user_id)):
+#         temp = []
+#         temp.append([user_id[i]['summon']])
+
+@bot.tree.command(name="ladder", description="Classement des joueurs")
+async def ladder(interaction):
+    ladder = []
+    for user_key in user_id.keys():
+        id = user_id[user_key][0]["id"]
+        profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
+        res = requests.get(profile_data, timeout=127)
+        user_profile = res.json()
+
+        temp = []
+        temp.append(user_profile[1]['tier'])
+        temp.append(user_profile[1]['rank'])
+        temp.append(user_profile[1]['leaguePoints'])
+        ladder.append(temp)
+
+    await interaction.response.send_message(ladder)
+
+
 # @tasks.loop(seconds = 60)
 # async def autoTracker():
 #     print("autoTracker")
