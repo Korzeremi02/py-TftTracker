@@ -10,6 +10,6 @@ Ce programme est distribué sous la licence Creative Commons Attribution-NonComm
 4. Si vous modifiez ce programme, vous devez le distribuer sous les mêmes termes.
 
 ## Contact
-Pour toute question ou clarification, veuillez me contacter à l'adresse suivante : 
-raphael.pro@romero-raphael.com
-r.korzeniowski@icloud.com
+Pour toute question ou clarification, veuillez me contacter à l'adresse suivante :  
+raphael.pro@romero-raphael.com  
+r.korzeniowski@icloud.com  
