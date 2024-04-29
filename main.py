@@ -9,8 +9,11 @@ intents = discord.Intents.default()
 intents.members =True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
+
 api_key = os.getenv("API_KEY")
 discord_key = os.getenv("DISCORD_KEY")
+
+user_data = {}
 
 # Faire help et init
 
@@ -23,8 +26,13 @@ async def ping(ctx):
   await ctx.send('TftTracker est bien opérationnel !')
 
 @bot.command()
-async def define(ctx):
-    await ctx.send('Test')
+async def define(ctx, member: discord.Member, riot_name: str, region: str):
+    user_data[member.id] = {"riot_name": riot_name, "region": region}
+    await ctx.send(f"{member.display_name} : Riot username = {riot_name}; Region = {region}")
+
+@bot.command()
+async def display(ctx):
+    await ctx.send(user_data)
 
 @bot.command()
 async def stats(ctx, summoner_name: str):
