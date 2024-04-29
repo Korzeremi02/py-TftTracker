@@ -10,7 +10,7 @@ intents.members =True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-api_key = os.getenv("API_KEY")
+riot_key = os.getenv("RIOT_KEY")
 discord_key = os.getenv("DISCORD_KEY")
 
 user_data = {}
