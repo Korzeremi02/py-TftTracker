@@ -17,9 +17,9 @@ user_data = {}
 
 # Faire help et init
 
-# @bot.command()
-# async def help(ctx):
-    
+@bot.command()
+async def helpme(ctx,):
+    await ctx.send("Aide TeamTracker \n\nCommandes : \n**!helpme @TeamTracker** : Afficher aide bot TT \n**!ping @TeamTracker** : Ping TT \n**!define @MentionDiscord NomUtilisateurRiot Region @TeamTracker** : Ajouter utilisateur discord dans TT \n**!display @TeamTracker** : Afficher utilisateur TT \n**!stats @MentionDiscord @TeamTracker** : Afficher stats actuelles mention Discord ")
 
 @bot.command()
 async def ping(ctx):
@@ -52,14 +52,12 @@ async def stats(ctx, member: discord.Member):
         data = user_data[member.id]
         await ctx.send(f"Informations pour {member.display_name} : Nom d'utilisateur Riot = {data['riot_name']}, Région = {data['region']}")
     else:
-        await ctx.send(f"Aucune information trouvée pour {member.display_name}.")
-        await ctx.send(f"Merci de l'ajouter via la commande suivante :")
-        await ctx.send(f"!define @Mention RiotUsername Region @TeamTracker")
+        await ctx.send(f"Aucune information trouvée pour {member.display_name}. \nMerci de l'ajouter via la commande suivante : \n**!define @Mention NomUtilisateurRiot Region @TeamTracker**")
 
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="!help"))
+    await bot.change_presence(activity=discord.Game(name="!helpme @TeamTracker"))
     print(f"Bot connecté en tant que {bot.user.name} ({bot.user.id})")
 
 bot.run(discord_key)
