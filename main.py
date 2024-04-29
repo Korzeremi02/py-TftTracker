@@ -1,6 +1,6 @@
 import discord
 import os
-from discord.ext import commands
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,6 +18,7 @@ user_data = {}
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"))
+    autoTracker.start()
     synced = await bot.tree.sync()
     print(f"Synchronisation de {len(synced)} commandes")
 
@@ -44,13 +45,17 @@ async def erase(interaction):
     await interaction.response.send_message(f"Mémoire effacée !")
     user_data = {}
 
-@bot.tree.command(name="stats", description="Afficher les statistiques générales de la mention")
-async def stats(interaction, member: discord.Member):
-    if member.id in user_data:
-        data = user_data[member.id]
-        await interaction.response.send_message(f"Informations pour {member.display_name} : Nom d'utilisateur Riot = {data['riot_name']}, Région = {data['region']}")
-    else:
-        await interaction.response.send_message(f"Aucune information trouvée pour {member.display_name}. \nMerci de l'ajouter via la commande suivante : \n**!define @Mention NomUtilisateurRiot Region **")
+@tasks.loop(seconds = 60)
+async def autoTracker():
+    print("autoTracker")
+
+# @bot.tree.command(name="stats", description="Afficher les statistiques générales de la mention")
+# async def stats(interaction, member: discord.Member):
+#     if member.id in user_data:
+#         data = user_data[member.id]
+#         await interaction.response.send_message(f"Informations pour {member.display_name} : Nom d'utilisateur Riot = {data['riot_name']}, Région = {data['region']}")
+#     else:
+#         await interaction.response.send_message(f"Aucune information trouvée pour {member.display_name}. \nMerci de l'ajouter via la commande suivante : \n**!define @Mention NomUtilisateurRiot Region **")
 
 bot.run(discord_key)
 
