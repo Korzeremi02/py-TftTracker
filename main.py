@@ -8,13 +8,19 @@ load_dotenv()
 intents = discord.Intents.default()
 intents.members =True
 
-bot = commands.Bot(command_prefix='!tft', intents=intents)
+bot = commands.Bot(command_prefix='t!', intents=intents)
 api_key = os.getenv("API_KEY")
 discord_key = os.getenv("DISCORD_KEY")
 
+# Faire help et init
+
 @bot.command()
 async def ping(ctx):
-  await ctx.send('Le bot TftTracker est bien opérationnel !')
+  await ctx.send('TftTracker est bien opérationnel !')
+
+@bot.command()
+async def define(ctx):
+    await ctx.send('Test')
 
 @bot.command()
 async def stats(ctx, summoner_name: str):
@@ -33,6 +39,7 @@ async def stats(ctx, summoner_name: str):
 
 @bot.event
 async def on_ready():
+    await bot.change_presence(activity=discord.Game(name="t!help"))
     print(f"Bot connecté en tant que {bot.user.name} ({bot.user.id})")
 
 bot.run(discord_key)
