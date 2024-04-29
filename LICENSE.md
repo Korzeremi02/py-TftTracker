@@ -1,15 +1,13 @@
 # Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)
+## Preamble
+This program is distributed under the Creative Commons Attribution-NonCommercial 4.0 International License. Please refer to the license for more details.
 
-## Préambule
-Ce programme est distribué sous la licence Creative Commons Attribution-NonCommercial 4.0 International License. Consultez la licence pour plus de détails.
-
-## Conditions de la licence
-1. Vous pouvez copier, distribuer et modifier ce programme sous les termes de la licence CC BY-NC 4.0.
-2. Cette licence autorise toute exploitation de l'œuvre à des fins non commerciales uniquement.
-3. Vous devez inclure une copie de la licence avec chaque copie du programme.
-4. Si vous modifiez ce programme, vous devez le distribuer sous les mêmes termes.
-
+## License Terms
+1- You may copy, distribute, and modify this program under the terms of the CC BY-NC 4.0 license.
+2 - This license allows any use of the work for non-commercial purposes only.
+3 - You must include a copy of the license with each copy of the program.
+4 - If you modify this program, you must distribute it under the same terms.
 ## Contact
-Pour toute question ou clarification, veuillez me contacter à l'adresse suivante :  
-raphael.pro@romero-raphael.com  
-r.korzeniowski@icloud.com  
+For any questions or clarifications, please contact me at the following address:
+raphael.pro@romero-raphael.com
+r.korzeniowski@icloud.com
