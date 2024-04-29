@@ -6,5 +6,9 @@ TFT-Trackers is a powerful discord bot written in Python for TeamFight Tacticts.
 ## Functionnalities 
 |Working|
 |------|
+|Fetching datas :|
 |ID|
 |PUUID|
+|RIOT NAME|
+|DISCORD NAME FROM MENTION|
+|STATS IN-GAME|
