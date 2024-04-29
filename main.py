@@ -45,11 +45,9 @@ async def define(interaction, member: discord.Member, riot_name: str, tag: str, 
     id = 'https://euw1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/' + puid + '?api_key=' + riot_key
     res2 = requests.get(id, timeout=127)
     user_id[member.id] = [dict(res2.json())]
-    username = member
     username = member.name
     user_id[member.id][0]["discord_member"] = username
     user_secret = {}
-    print(user_id)
     await interaction.response.send_message(f"Id du membre Discord : {member.display_name} \nRiot username = {riot_name}\nTag = {tag}\nRegion = {region}\nStatus = {status}")
 
 @bot.tree.command(name="showsecret", description="show")
@@ -110,6 +108,7 @@ async def infosdoubleup(interaction, member: discord.Member):
 @bot.tree.command(name="ladder", description="Classement des joueurs")
 async def ladder(interaction):
     ladder = []
+    compt = 0
     for user_key in user_id.keys():
         id = user_id[user_key][0]["id"]
         profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
@@ -117,10 +116,12 @@ async def ladder(interaction):
         user_profile = res.json()
 
         temp = []
+        temp.append(str(user_id[list(user_id.keys())[compt]][0]["discord_member"]).capitalize())
         temp.append(user_profile[1]['tier'])
         temp.append(user_profile[1]['rank'])
         temp.append(user_profile[1]['leaguePoints'])
         ladder.append(temp)
+        compt += 1
 
     await interaction.response.send_message(ladder)
 
