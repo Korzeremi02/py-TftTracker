@@ -19,11 +19,11 @@ user_data = {}
 
 @bot.command()
 async def helpme(ctx,):
-    await ctx.send("Aide TeamTracker \n\nCommandes : \n**!helpme @TeamTracker** : Afficher aide bot TT \n**!ping @TeamTracker** : Ping TT \n**!define @MentionDiscord NomUtilisateurRiot Region @TeamTracker** : Ajouter utilisateur discord dans TT \n**!display @TeamTracker** : Afficher utilisateur TT \n**!erase @TeamTracker** : Effacer mémoire TT \n**!stats @MentionDiscord @TeamTracker** : Afficher stats actuelles mention Discord ")
+    await ctx.send(f"Aide TeamTracker \n\nCommandes : \n**!helpme @TeamTracker** : Afficher aide bot TT \n**!ping @TeamTracker** : Ping TT \n**!define @MentionDiscord NomUtilisateurRiot Region @TeamTracker** : Ajouter utilisateur discord dans TT \n**!display @TeamTracker** : Afficher utilisateur TT \n**!erase @TeamTracker** : Effacer mémoire TT \n**!stats @MentionDiscord @TeamTracker** : Afficher stats actuelles mention Discord ")
 
 @bot.command()
 async def ping(ctx):
-  await ctx.send('TftTracker est bien opérationnel !')
+  await ctx.send(f"TftTracker est bien opérationnel !")
 
 @bot.command()
 async def define(ctx, member: discord.Member, riot_name: str, region: str):
@@ -42,18 +42,6 @@ async def erase(ctx):
 
 @bot.command()
 async def stats(ctx, member: discord.Member):
-    # rank = "Challenger"
-    # lp = 250
-    # current_game = True
-    # game_info = "ID de la partie : 12345, Top 4, Gain de LP : +20"
-    # composition = "Blaster/Brawler"
-
-    # if current_game:
-    #     response = f"**{summoner_name}** est actuellement en partie !\n{game_info}\nComposition : {composition}"
-    # else:
-    #     response = f"**{summoner_name}** est {rank} avec {lp} LP.\nComposition préférée : {composition}"
-
-    # await ctx.send(response)
     if member.id in user_data:
         data = user_data[member.id]
         await ctx.send(f"Informations pour {member.display_name} : Nom d'utilisateur Riot = {data['riot_name']}, Région = {data['region']}")
