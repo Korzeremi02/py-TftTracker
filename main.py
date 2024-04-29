@@ -32,7 +32,7 @@ async def ping(interaction):
   await interaction.response.send_message(f"TftTracker est bien opérationnel !")
 
 @bot.tree.command(name="define", description="Ajouter un utilisateur Discord à TeamTracker")
-async def define(interaction, member: discord.Member, riot_name: str, region: str, status: False):
+async def define(interaction, member: discord.Member, riot_name: str, region: str, status: bool):
     user_data[member.id] = {"riot_name": riot_name, "region": region, "status": status}
     await interaction.response.send_message(f"{member.display_name} : Riot username = {riot_name}; Region = {region}; Status = {status}")
 
