@@ -15,13 +15,11 @@ discord_key = os.getenv("DISCORD_KEY")
 
 user_data = {}
 
-# Faire help et init
-
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"))
     synced = await bot.tree.sync()
-    print(f"Synced {len(synced)} command(s)")
+    print(f"Synchronisation de {len(synced)} commandes")
 
 @bot.tree.command(name="help", description="Afficher l'aide du bot TeamTracker")
 async def helpme(interaction):
@@ -54,6 +52,8 @@ async def stats(interaction, member: discord.Member):
     else:
         await interaction.response.send_message(f"Aucune information trouvée pour {member.display_name}. \nMerci de l'ajouter via la commande suivante : \n**!define @Mention NomUtilisateurRiot Region **")
 
-# Si les joueurs sont en game, alors afficher les datas de manière automatique sans commande
-
 bot.run(discord_key)
+
+# ------------------------------------------------------------------------------------------
+
+# Si les joueurs sont en game, alors afficher les datas de manière automatique sans commande
