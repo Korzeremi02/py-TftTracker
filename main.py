@@ -35,19 +35,27 @@ async def display(ctx):
     await ctx.send(user_data)
 
 @bot.command()
-async def stats(ctx, summoner_name: str):
-    rank = "Challenger"
-    lp = 250
-    current_game = True
-    game_info = "ID de la partie : 12345, Top 4, Gain de LP : +20"
-    composition = "Blaster/Brawler"
+async def stats(ctx, member: discord.Member):
+    # rank = "Challenger"
+    # lp = 250
+    # current_game = True
+    # game_info = "ID de la partie : 12345, Top 4, Gain de LP : +20"
+    # composition = "Blaster/Brawler"
 
-    if current_game:
-        response = f"**{summoner_name}** est actuellement en partie !\n{game_info}\nComposition : {composition}"
+    # if current_game:
+    #     response = f"**{summoner_name}** est actuellement en partie !\n{game_info}\nComposition : {composition}"
+    # else:
+    #     response = f"**{summoner_name}** est {rank} avec {lp} LP.\nComposition préférée : {composition}"
+
+    # await ctx.send(response)
+    if member.id in user_data:
+        data = user_data[member.id]
+        await ctx.send(f"Informations pour {member.display_name} : Nom d'utilisateur Riot = {data['riot_name']}, Région = {data['region']}")
     else:
-        response = f"**{summoner_name}** est {rank} avec {lp} LP.\nComposition préférée : {composition}"
+        await ctx.send(f"Aucune information trouvée pour {member.display_name}.")
+        await ctx.send(f"Merci de l'ajouter via la commande suivante :")
+        await ctx.send(f"!define @Mention RiotUsername Region @TeamTracker")
 
-    await ctx.send(response)
 
 @bot.event
 async def on_ready():
