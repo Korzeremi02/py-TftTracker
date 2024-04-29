@@ -1,10 +1,16 @@
 import discord
+import os
 from discord.ext import commands
+from dotenv import load_dotenv
+
+load_dotenv()
+
 intents = discord.Intents.default()
 intents.members =True
 
 bot = commands.Bot(command_prefix='!tft', intents=intents)
-
+api_key = os.getenv("API_KEY")
+discord_key = os.getenv("DISCORD_KEY")
 
 @bot.command()
 async def ping(ctx):
@@ -29,4 +35,4 @@ async def stats(ctx, summoner_name: str):
 async def on_ready():
     print(f"Bot connecté en tant que {bot.user.name} ({bot.user.id})")
 
-bot.run()
+bot.run(discord_key)
