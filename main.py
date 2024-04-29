@@ -19,7 +19,7 @@ user_data = {}
 
 @bot.command()
 async def helpme(ctx,):
-    await ctx.send("Aide TeamTracker \n\nCommandes : \n**!helpme @TeamTracker** : Afficher aide bot TT \n**!ping @TeamTracker** : Ping TT \n**!define @MentionDiscord NomUtilisateurRiot Region @TeamTracker** : Ajouter utilisateur discord dans TT \n**!display @TeamTracker** : Afficher utilisateur TT \n**!stats @MentionDiscord @TeamTracker** : Afficher stats actuelles mention Discord ")
+    await ctx.send("Aide TeamTracker \n\nCommandes : \n**!helpme @TeamTracker** : Afficher aide bot TT \n**!ping @TeamTracker** : Ping TT \n**!define @MentionDiscord NomUtilisateurRiot Region @TeamTracker** : Ajouter utilisateur discord dans TT \n**!display @TeamTracker** : Afficher utilisateur TT \n**!erase @TeamTracker** : Effacer mémoire TT \n**!stats @MentionDiscord @TeamTracker** : Afficher stats actuelles mention Discord ")
 
 @bot.command()
 async def ping(ctx):
@@ -33,6 +33,12 @@ async def define(ctx, member: discord.Member, riot_name: str, region: str):
 @bot.command()
 async def display(ctx):
     await ctx.send(user_data)
+
+@bot.command()
+async def erase(ctx):
+    global user_data
+    await ctx.send(f"Mémoire effacée !")
+    user_data = {}
 
 @bot.command()
 async def stats(ctx, member: discord.Member):
