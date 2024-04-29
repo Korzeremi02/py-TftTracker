@@ -8,11 +8,15 @@ load_dotenv()
 intents = discord.Intents.default()
 intents.members =True
 
-bot = commands.Bot(command_prefix='t!', intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 api_key = os.getenv("API_KEY")
 discord_key = os.getenv("DISCORD_KEY")
 
 # Faire help et init
+
+# @bot.command()
+# async def help(ctx):
+    
 
 @bot.command()
 async def ping(ctx):
@@ -39,7 +43,7 @@ async def stats(ctx, summoner_name: str):
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="t!help"))
+    await bot.change_presence(activity=discord.Game(name="!help"))
     print(f"Bot connecté en tant que {bot.user.name} ({bot.user.id})")
 
 bot.run(discord_key)
