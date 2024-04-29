@@ -32,9 +32,9 @@ async def ping(interaction):
   await interaction.response.send_message(f"TftTracker est bien opérationnel !")
 
 @bot.tree.command(name="define", description="Ajouter un utilisateur Discord à TeamTracker")
-async def define(interaction, member: discord.Member, riot_name: str, region: str):
-    user_data[member.id] = {"riot_name": riot_name, "region": region}
-    await interaction.response.send_message(f"{member.display_name} : Riot username = {riot_name}; Region = {region}")
+async def define(interaction, member: discord.Member, riot_name: str, region: str, status: False):
+    user_data[member.id] = {"riot_name": riot_name, "region": region, "status": status}
+    await interaction.response.send_message(f"{member.display_name} : Riot username = {riot_name}; Region = {region}; Status = {status}")
 
 @bot.tree.command(name="display", description="Afficher les données de TeamTracker")
 async def display(interaction):
@@ -53,5 +53,7 @@ async def stats(interaction, member: discord.Member):
         await interaction.response.send_message(f"Informations pour {member.display_name} : Nom d'utilisateur Riot = {data['riot_name']}, Région = {data['region']}")
     else:
         await interaction.response.send_message(f"Aucune information trouvée pour {member.display_name}. \nMerci de l'ajouter via la commande suivante : \n**!define @Mention NomUtilisateurRiot Region **")
+
+# Si les joueurs sont en game, alors afficher les datas de manière automatique sans commande
 
 bot.run(discord_key)
