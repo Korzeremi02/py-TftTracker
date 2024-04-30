@@ -263,6 +263,38 @@ async def get_player_info(session, riot_key, player_id):
     async with session.get(url) as response:
         return await response.json()
 
+@bot.tree.command(name="matches", description="Ajouter un utilisateur Discord à TeamTracker")
+async def matches(interaction, member: discord.Member, last: int):
+    puuid = user_id[member.id][0]['puuid']
+    matches = "https://europe.api.riotgames.com/tft/match/v1/matches/by-puuid/" + puuid + "/ids?start=0&count=10&api_key=" + riot_key
+    res = requests.get(matches, timeout=127)
+    matches_array = res.json()
+
+    match_details = "https://europe.api.riotgames.com/tft/match/v1/matches/" + matches_array[last] + '?api_key=' + riot_key
+    res = requests.get(match_details, timeout=127)
+    match_details = [dict(res.json())]
+
+    participant_data = get_participant_data(match_details, puuid)
+    participant_info = extract_participant_info(participant_data)
+    print(participant_info)
+
+    await interaction.response.send_message("pas d'erreur")
+
+def get_participant_data(data, puuid):
+    for participant in data[0]['info']['participants']:
+        if participant['puuid'] == puuid:
+            return participant
+    return None
+
+def extract_participant_info(participant_data):
+    extracted_info = {
+        "augments": participant_data["augments"],
+        "level": participant_data["level"],
+        "placement": participant_data["placement"],
+        "traits": participant_data["traits"],
+        "units": participant_data["units"]
+    }
+    return extracted_info
 
 # @tasks.loop(seconds = 60)
 # async def autoTracker():
