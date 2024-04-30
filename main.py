@@ -160,13 +160,10 @@ async def infosdoubleup(interaction, member: discord.Member):
 
 # @bot.tree.command(name="ingame", description="Voir les joueurs ingame")
 # async def ingame(interaction):
-#     compt = 0
-#     ingame = []
-    
-#     for user_key in user_id.keys():
+#     ladder = []
+#     for i in range(len(user_id)):
 #         temp = []
 #         temp.append([user_id[i]['summon']])
-#         compt +=1
 
 @bot.tree.command(name="ladder", description="Classement des joueurs")
 async def ladder(interaction):
@@ -177,6 +174,7 @@ async def ladder(interaction):
         profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
         res = requests.get(profile_data, timeout=127)
         user_profile = res.json()
+        print(user_profile)
 
         temp = []
         temp.append(str(user_id[list(user_id.keys())[compt]][0]["discord_member"]).capitalize())
