@@ -2,7 +2,10 @@ import discord
 import os
 import requests
 from discord.ext import commands, tasks
+from discord import File
 from dotenv import load_dotenv
+from easy_pil import Editor, load_image_async, Font
+from PIL import Image, ImageDraw, ImageFont
 
 load_dotenv()
 
@@ -78,6 +81,26 @@ async def define(interaction, member: discord.Member, riot_name: str, tag: str, 
             interaction.response.send_message("Erreur lors de l'envoie du message de la commande define")
     except:
         interaction.response.send_message("Erreur majeure lors de l'ajout de la mention Discord")
+
+@bot.tree.command(name="image", description="Image")
+async def image(interaction, member: discord.Member):
+    label = ImageFont.truetype("./assets/fonts/inter.ttf", 38)
+    userfont = ImageFont.truetype("./assets/fonts/inter.ttf", 50)
+    descfont = ImageFont.truetype("./assets/fonts/inter.ttf", 42)
+    card = Editor("./assets/png/card.png")
+    card.text((90,730), text="135", color="#ffffff", font=label)
+    card.text((270,730), text="76", color="#ffffff", font=label)
+    card.text((405,730), text="66.7%", color="#ffffff", font=label)
+    card.text((95,500), text="RaphTPLR#EUW", color="#ffffff", font=userfont)
+    card.text((110,580), text="Diamond IV 35 LP", color="#ffffff", font=descfont)
+    card.rectangle((50,190),width=480,height=260,fill="red")
+    card.ellipse((230,50),width=120,height=120,fill="blue")
+    # card.text((10,10), text=member.name)
+    file = File(fp=card.image_bytes, filename="pic.png")
+    await interaction.response.send_message(file=file)
+    # try:
+    # except:
+    #     interaction.response.send_message(f"Erreur lors de la génération de la carte")
 
 @bot.tree.command(name="showsecret", description="show")
 async def showsecret(interaction):
