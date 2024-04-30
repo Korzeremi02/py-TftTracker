@@ -19,8 +19,6 @@ user_secret = {}
 user_data = {}
 user_profile = {}
 
-tmp = {}
-
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"))
