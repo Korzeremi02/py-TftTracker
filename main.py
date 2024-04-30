@@ -20,14 +20,11 @@ user_data = {}
 user_profile = {}
 
 @bot.event
-async def on_ready(interaction):
-    try:
-        await bot.change_presence(activity=discord.Game(name="/help"))
-        # autoTracker.start()
-        synced = await bot.tree.sync()
-        print(f"Synchronisation de {len(synced)} commandes")
-    except:
-        await interaction.reponse.send_message(f"Erreur lors du démarrage du bot")
+async def on_ready():
+    await bot.change_presence(activity=discord.Game(name="/help"))
+    # autoTracker.start()
+    synced = await bot.tree.sync()
+    print(f"Synchronisation de {len(synced)} commandes")
 
 @bot.tree.command(name="help", description="Afficher l'aide du bot TeamTracker")
 async def helpme(interaction):
@@ -211,4 +208,4 @@ bot.run(discord_key)
 
 # ------------------------------------------------------------------------------------------
 
-# Si les joueurs sont en game, alors afficher les datas de manière automatique sans commande
+# Si les joueurs sont en game, alors afficher les datas de manière automatique sans commandes

@@ -4,11 +4,29 @@
 ## Informations
 TFT-Trackers is a powerful discord bot written in Python for TeamFight Tacticts. It uses the riot API to communicate with riot servers and fetching datas.
 ## Functionnalities 
-|Working|
+|FETCHING DATA|
 |------|
-|Fetching datas :|
-|ID|
-|PUUID|
-|RIOT NAME|
-|DISCORD NAME FROM MENTION|
-|STATS IN-GAME|
+|id|
+|puuid|
+|riot_name|
+|discord_name_from_mention|
+|in-game_stats|
+
+|COMMANDS|DESCRIPTION|
+|------|------|
+|/define|Add new player|
+|/display|Show current memory|
+|/erase|Format bot memory|
+|/help|Displaying help|
+|/image|Generate card|
+|/infos|Last tft match|
+|/infosdoubleup|Last doubleup tft match|
+|/ladder|Show leaderboard|
+|/ping|Ping bot|
+|/showsecret|Show current secret infos|
+## Repository arborescence
+|Branch name|Description|
+|------|------|
+|**main**|current development version of TFT-Tracker|
+|**stable**|latest stable version of TFT-Tracker|
+|**testing**|Test version with new functionnalities & tests (UNSTABLE & BUGS)|
