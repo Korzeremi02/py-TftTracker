@@ -19,6 +19,8 @@ user_secret = {}
 user_data = {}
 user_profile = {}
 
+tmp = {}
+
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"))
@@ -210,4 +212,4 @@ bot.run(discord_key)
 
 # ------------------------------------------------------------------------------------------
 
-# Si les joueurs sont en game, alors afficher les datas de manière automatique sans commande
+# Si les joueurs sont en game, alors afficher les datas de manière automatique sans commandes
