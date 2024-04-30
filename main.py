@@ -47,6 +47,8 @@ async def ping(interaction):
 async def define(interaction, member: discord.Member, riot_name: str, tag: str, region: str, status: bool):
     try:
         global user_secret
+        if status != False:
+            status = False
         user_data[member.id] = {"riot_name": riot_name, "tag": tag, "region": region, "status": status}
         try:
             puid = 'https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/' + riot_name + "/" + tag + '?api_key=' + riot_key
@@ -158,10 +160,13 @@ async def infosdoubleup(interaction, member: discord.Member):
 
 # @bot.tree.command(name="ingame", description="Voir les joueurs ingame")
 # async def ingame(interaction):
-#     ladder = []
-#     for i in range(len(user_id)):
+#     compt = 0
+#     ingame = []
+    
+#     for user_key in user_id.keys():
 #         temp = []
 #         temp.append([user_id[i]['summon']])
+#         compt +=1
 
 @bot.tree.command(name="ladder", description="Classement des joueurs")
 async def ladder(interaction):
@@ -172,7 +177,6 @@ async def ladder(interaction):
         profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
         res = requests.get(profile_data, timeout=127)
         user_profile = res.json()
-        print(user_profile)
 
         temp = []
         temp.append(str(user_id[list(user_id.keys())[compt]][0]["discord_member"]).capitalize())
