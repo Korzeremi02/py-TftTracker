@@ -3,6 +3,8 @@ import os
 import requests
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
+import aiohttp
+import asyncio
 
 load_dotenv()
 
@@ -220,50 +222,6 @@ async def ladder(interaction):
 
     sorted_ladder = sorted(ladder, key=custom_sort, reverse=True)
     await interaction.response.send_message(sorted_ladder)
-
-# @bot.tree.command(name="game", description="Afficher les statistiques générales de la mention")
-# async def game(interaction, member: discord.Member):
-#     puuid = user_id[member.id][0]['puuid']
-#     current = 'https://euw1.api.riotgames.com/lol/spectator/tft/v5/active-games/by-puuid/' + puuid + '?api_key=' + riot_key
-#     res = requests.get(current, timeout = 127)
-#     res = [dict(res.json())]
-
-#     if 'status' in res[0]:
-#         message = res[0]['status'].get('message')
-#         if message:
-#             await interaction.response.send_message(str(user_id[member.id][0]["discord_member"]).capitalize() + " n'est actuellement pas en game !")
-#     else:
-#         players_ingame = []
-#         temp = []
-#         ids = [[participant['riotId'], participant['summonerId']] for participant in res[0]['participants']]
-
-#         for id in ids:
-#             players = "https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/" + id[1] + '?api_key=' + riot_key
-#             # print(players)
-#             res = requests.get(players, timeout = 127)
-#             res = res.json()
-            
-#             temp.append(str(id[0]))
-#             # if len(res) > 1 :
-#             #     temp.append(str(res[1]['tier']))
-#             #     temp.append(str(res[1]['rank']))
-#             #     temp.append(str(res[1]['leaguePoints']) + " LP")
-#             # else:
-#             #     temp.append(str(res[0]['tier']))
-#             #     temp.append(str(res[0]['rank']))
-#             #     temp.append(str(res[0]['leaguePoints']) + " LP")
-
-#             temp.append(str(res[0]['tier']))
-#             temp.append(str(res[0]['rank']))
-#             temp.append(str(res[0]['leaguePoints']) + " LP")
-#             players_ingame.append(temp)
-#             temp = []
-
-#         print(players_ingame)
-#         await interaction.response.send_message("c'est ok !")
-
-import aiohttp
-import asyncio
 
 @bot.tree.command(name="game", description="Afficher les statistiques générales de la mention")
 async def game(interaction, member: discord.Member):
