@@ -91,7 +91,7 @@ async def image(interaction, member: discord.Member):
     card.text((90,730), text="135", color="#ffffff", font=label)
     card.text((270,730), text="76", color="#ffffff", font=label)
     card.text((405,730), text="66.7%", color="#ffffff", font=label)
-    card.text((95,500), text="RaphTPLR#EUW", color="#ffffff", font=userfont)
+    card.text((95, 500), text="RaphTPLR", color="#ffffff", font=userfont)
     card.text((110,580), text="Diamond IV 35 LP", color="#ffffff", font=descfont)
     card.rectangle((50,190),width=480,height=260,fill="red")
     card.ellipse((230,50),width=120,height=120,fill="blue")
