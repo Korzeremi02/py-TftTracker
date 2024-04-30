@@ -239,13 +239,23 @@ async def game(interaction, member: discord.Member):
 
         for id in ids:
             players = "https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/" + id[1] + '?api_key=' + riot_key
+            # print(players)
             res = requests.get(players, timeout = 127)
             res = res.json()
             
             temp.append(str(id[0]))
-            temp.append(str(res[-1]['tier']))
-            temp.append(str(res[-1]['rank']))
-            temp.append(str(res[-1]['leaguePoints']) + " LP")
+            # if len(res) > 1 :
+            #     temp.append(str(res[1]['tier']))
+            #     temp.append(str(res[1]['rank']))
+            #     temp.append(str(res[1]['leaguePoints']) + " LP")
+            # else:
+            #     temp.append(str(res[0]['tier']))
+            #     temp.append(str(res[0]['rank']))
+            #     temp.append(str(res[0]['leaguePoints']) + " LP")
+
+            temp.append(str(res[0]['tier']))
+            temp.append(str(res[0]['rank']))
+            temp.append(str(res[0]['leaguePoints']) + " LP")
             players_ingame.append(temp)
             temp = []
 
