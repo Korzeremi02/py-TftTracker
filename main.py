@@ -155,12 +155,41 @@ async def infosdoubleup(interaction, member: discord.Member):
         interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
 
 
-# @bot.tree.command(name="ingame", description="Voir les joueurs ingame")
-# async def ingame(interaction):
-#     ladder = []
-#     for i in range(len(user_id)):
-#         temp = []
-#         temp.append([user_id[i]['summon']])
+@bot.tree.command(name="ingame", description="Voir les joueurs ingame")
+async def ingame(interaction):
+    ladder = []
+    players = []
+    ingame = []
+    compt = 0
+
+    for user_key in user_id.keys():
+        temp = []
+        name = user_id[user_key][0]["discord_member"]
+        puuid = user_id[user_key][0]["puuid"]
+
+        temp.append(name)
+        temp.append(puuid)
+        players.append(temp)
+
+    for player in players:
+        current = 'https://euw1.api.riotgames.com/lol/spectator/tft/v5/active-games/by-puuid/' + player[1] + '?api_key=' + riot_key
+        res = requests.get(current, timeout = 127)
+        res = [dict(res.json())]
+        
+        try:
+            message = res[0]['status']['message']
+        except KeyError:
+            message = res[0]['gameId']
+
+        if message == "Data not found - spectator game info isn't found":
+            ingame.append(player[0])
+            ingame.append(False)
+        else :
+            ingame.append(player[0])
+            ingame.append(True)
+            compt += 1
+
+    await interaction.response.send_message(ingame)
 
 @bot.tree.command(name="ladder", description="Classement des joueurs")
 async def ladder(interaction):
@@ -171,7 +200,6 @@ async def ladder(interaction):
         profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
         res = requests.get(profile_data, timeout=127)
         user_profile = res.json()
-        print(user_profile)
 
         temp = []
         temp.append(str(user_id[list(user_id.keys())[compt]][0]["discord_member"]).capitalize())
@@ -191,11 +219,6 @@ async def ladder(interaction):
         return (division_rank, division_level, lp)
 
     sorted_ladder = sorted(ladder, key=custom_sort, reverse=True)
-
-    # # for player in sorted_ladder:
-    # #     print(player)
-
-
     await interaction.response.send_message(sorted_ladder)
 
 
