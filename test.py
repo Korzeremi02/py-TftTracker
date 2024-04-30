@@ -84,8 +84,7 @@ async def define(interaction, member: discord.Member, riot_name: str, tag: str, 
 @bot.tree.command(name="image", description="Image")
 async def image(interaction, member: discord.Member):
     background = Editor("./assets/card.png")
-    background.ellipse((325, 90), 150, 150, outline="black", stroke_width=5)
-    background.text((10,10), text=member.name)
+    # background.text((10,10), text=member.name)
     file = File(fp=background.image_bytes, filename="pic.png")
     await interaction.response.send_message(file=file)
     # try:
