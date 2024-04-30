@@ -175,7 +175,7 @@ async def ingame(interaction):
         current = 'https://euw1.api.riotgames.com/lol/spectator/tft/v5/active-games/by-puuid/' + player[1] + '?api_key=' + riot_key
         res = requests.get(current, timeout = 127)
         res = [dict(res.json())]
-        
+
         try:
             message = res[0]['status']['message']
         except KeyError:
@@ -221,6 +221,52 @@ async def ladder(interaction):
     sorted_ladder = sorted(ladder, key=custom_sort, reverse=True)
     await interaction.response.send_message(sorted_ladder)
 
+@bot.tree.command(name="game", description="Afficher les statistiques générales de la mention")
+async def game(interaction, member: discord.Member):
+    puuid = user_id[member.id][0]['puuid']
+    current = 'https://euw1.api.riotgames.com/lol/spectator/tft/v5/active-games/by-puuid/' + puuid + '?api_key=' + riot_key
+    res = requests.get(current, timeout = 127)
+    res = [dict(res.json())]
+
+    try:
+        message = res[0]['status']['message']
+        await interaction.response.send_message(str(user_id[member.id][0]["discord_member"]).capitalize() + " n'est actuellement pas en game !")
+    except KeyError:
+        puuids = [participant['puuid'] for participant in res[0]['participants']]
+        
+        for puuid in puuids:
+            id_array = []
+            req = "https://euw1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/" + puuid + '?api_key=' + riot_key
+            res = requests.get(current, timeout = 127)
+            res = [dict(res.json())]
+
+            for participant in res[0]["participants"]:
+                temp = []
+                id = participant['summonerId']
+                name = participant['riotId']
+                temp.append(name)
+                temp.append(id)
+                id_array.append(temp)
+                temp = []
+
+        for id in id_array:
+            temp = []
+            compt = 0
+
+            player_id = id_array[compt][1]
+
+            req2 = "https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/" + player_id + '?api_key=' + riot_key
+            res2 = requests.get(req2, timeout = 127)
+            res3 = res2.json()
+
+            print(res3)
+            # print(id_array)
+            # print("\n---------------------------------\n")
+
+        # message = res[0]['gameId']
+        # await interaction.response.send_message(message)
+        await interaction.response.send_message(str(user_id[member.id][0]["discord_member"]).capitalize() + " est actuellement en game !")
+        # await interaction.response.send_message(id_array)
 
 # @tasks.loop(seconds = 60)
 # async def autoTracker():
