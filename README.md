@@ -25,7 +25,8 @@ TFT-Trackers is a powerful discord bot written in Python for TeamFight Tacticts.
 |/ping|Ping bot|
 |/showsecret|Show current secret infos|
 ## Repository arborescence
-|File name|Description|
+|Branch name|Description|
 |------|------|
-|**main.py**|Last stable version of Tft-Tracker|
-|**test.py**|Test version with new functionnalities & tests (UNSTABLE & BUGS)|
+|**main**|current development version of TFT-Tracker|
+|**stable**|latest stable version of TFT-Tracker|
+|**testing**|Test version with new functionnalities & tests (UNSTABLE & BUGS)|
