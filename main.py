@@ -91,7 +91,7 @@ async def image(interaction, member: discord.Member):
     card.text((90,730), text="135", color="#ffffff", font=label)
     card.text((270,730), text="76", color="#ffffff", font=label)
     card.text((405,730), text="66.7%", color="#ffffff", font=label)
-    card.text((95,500), text="RaphTPLR#EUW", color="#ffffff", font=userfont)
+    card.text((95,500), text=member.name, color="#ffffff", font=userfont)
     card.text((110,580), text="Diamond IV 35 LP", color="#ffffff", font=descfont)
     card.rectangle((50,190),width=480,height=260,fill="red")
     card.ellipse((230,50),width=120,height=120,fill="blue")
@@ -178,15 +178,15 @@ async def infosdoubleup(interaction, member: discord.Member):
         interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
 
 
-# @bot.tree.command(name="ingame", description="Voir les joueurs ingame")
-# async def ingame(interaction):
-#     compt = 0
-#     ingame = []
+@bot.tree.command(name="ingame", description="Voir les joueurs ingame")
+async def ingame(interaction):
+    compt = 0
+    ingame = []
     
-#     for user_key in user_id.keys():
-#         temp = []
-#         temp.append([user_id[i]['summon']])
-#         compt +=1
+    for user_key in user_id.keys():
+        temp = []
+        temp.append([user_id[i]['summon']])
+        compt +=1
 
 @bot.tree.command(name="ladder", description="Classement des joueurs")
 async def ladder(interaction):
