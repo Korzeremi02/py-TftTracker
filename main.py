@@ -1,26 +1,32 @@
+# IMPORT PKG
 import discord
 import os
 import requests
 from discord.ext import commands, tasks
+from discord import File
 from dotenv import load_dotenv
+from easy_pil import Editor, load_image_async, Font
+from PIL import Image, ImageDraw, ImageFont
 import aiohttp
 import asyncio
 
+# PARAMS
 load_dotenv()
-
 intents = discord.Intents.default()
 intents.members =True
-
 bot = commands.Bot(command_prefix='/', intents=intents)
 
+# KEYS
 riot_key = os.getenv("RIOT_KEY")
 discord_key = os.getenv("DISCORD_KEY")
 
+# INIT DICTIONARIES
 user_id = {}
 user_secret = {}
 user_data = {}
 user_profile = {}
 
+# ON BOT STARTUP, DO...
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"))
@@ -28,13 +34,30 @@ async def on_ready():
     synced = await bot.tree.sync()
     print(f"Synchronisation de {len(synced)} commandes")
 
+# HELP CMD
 @bot.tree.command(name="help", description="Afficher l'aide du bot TeamTracker")
 async def helpme(interaction):
     try:
-        await interaction.response.send_message(f"Aide TeamTracker \n\nCommandes : \n**/helpme ** : Afficher aide bot TT \n**/ping ** : Ping TT \n**/define ** : Ajouter utilisateur discord dans TT \n**/display ** : Afficher utilisateur TT \n**/erase ** : Effacer mémoire TT \n**/infos** : Afficher stats actuelles mention Discord ")
+        await interaction.response.send_message(
+                    f"Aide TeamTracker \n\nCommandes : \n"
+                    "**/define** : Ajouter membre Discord dans TT \n"
+                    "**/display** : Afficher utilisateur(s) TT \n"
+                    "**/erase** : Effacer mémoire TT \n"
+                    "**/game @** : Afficher les stats du joueur mentionné en partie \n"
+                    "**/helpme** : Afficher aide bot TT \n"
+                    "**/image @** : Afficher une carte personnalisée pour le membre \n"
+                    "**/infos @** : Afficher stats actuelles mention Discord \n"
+                    "**/infosdoubleup @** : Afficher stats DBup actuelles mention Discord \n"
+                    "**/ingame** : Voir les joueurs en partie \n"
+                    "**/ladder** : Afficher le classement des joueurs \n"
+                    "**/matches @** : Afficher les détails de la dernière partie jouée par le joueur"
+                    "**/ping** : Ping TT \n"
+                    "**/showsecret** : Ping TT \n"
+                )
     except:
         await interaction.response.send_message(f"Erreur lors de l'affichage de l'aide")
 
+# PING CMD
 @bot.tree.command(name="ping", description="Effectuer un ping vers le bot TeamTracker")
 async def ping(interaction):
     try:
@@ -42,6 +65,7 @@ async def ping(interaction):
     except:
         await interaction.response.send_message(f"Erreur lors du ping")
 
+# DEFINE CMD
 @bot.tree.command(name="define", description="Ajouter un utilisateur Discord à TeamTracker")
 async def define(interaction, member: discord.Member, riot_name: str, tag: str, region: str, status: bool):
     try:
@@ -81,6 +105,40 @@ async def define(interaction, member: discord.Member, riot_name: str, tag: str, 
     except:
         interaction.response.send_message("Erreur majeure lors de l'ajout de la mention Discord")
 
+# IMAGE CMD
+@bot.tree.command(name="image", description="Image")
+async def image(interaction, member: discord.Member):
+    id = user_id[member.id][0]['id']
+    profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
+    res = requests.get(profile_data, timeout=127)
+    user_profile = res.json()
+    print(user_data[member.id]["riot_name"])
+    print(user_profile)
+    for profile in user_profile:
+        if profile["queueType"] == "RANKED_TFT":
+            ranked_profile = profile
+            break
+    else:
+        await interaction.response.send_message("Profil RANKED_TFT introuvable.")
+        return
+    totalGame = str(ranked_profile['wins'] + ranked_profile['losses'])
+    winGame = str(ranked_profile['wins'])
+    topGame = str(ranked_profile['wins'] / int(totalGame) * 100)
+    label = ImageFont.truetype("./assets/fonts/inter.ttf", 38)
+    userfont = ImageFont.truetype("./assets/fonts/inter.ttf", 50)
+    descfont = ImageFont.truetype("./assets/fonts/inter.ttf", 42)
+    card = Editor("./assets/png/card.png")
+    card.text((90,730), text=totalGame, color="#ffffff", font=label)
+    card.text((270,730), text=winGame, color="#ffffff", font=label)
+    card.text((405,730), text=topGame, color="#ffffff", font=label)
+    card.text((95,500), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
+    card.text((110,580), text=f"{ranked_profile['tier']} {ranked_profile['rank']} {ranked_profile['leaguePoints']} LP", color="#ffffff", font=descfont)
+    card.rectangle((50,190),width=480,height=260,fill="red")
+    card.ellipse((230,50),width=120,height=120,fill="blue")
+    file = File(fp=card.image_bytes, filename="pic.png")
+    await interaction.response.send_message(file=file)
+
+# SHOWSECRET CMD
 @bot.tree.command(name="showsecret", description="show")
 async def showsecret(interaction):
     try:
@@ -88,6 +146,7 @@ async def showsecret(interaction):
     except:
         interaction.response.send_message(f"Erreur lors de l'affichage de user_secret")
 
+# DISPLAY CMD
 @bot.tree.command(name="display", description="Afficher les données de TftTracker")
 async def display(interaction):
     try:
@@ -95,6 +154,7 @@ async def display(interaction):
     except:
         interaction.response.send_message("Erreur lors de l'affichage des données avec cmd display")
 
+# ERASE CMD
 @bot.tree.command(name="erase", description="Effacer les données de TeamTracker (DEBUG)")
 async def erase(interaction):
     try:
@@ -104,6 +164,7 @@ async def erase(interaction):
     except:
         interaction.response.send_message("Erreur lors de la suppresion de user_data")
 
+# INFOS CMD
 @bot.tree.command(name="infos", description="Afficher les statistiques générales de la mention")
 async def infos(interaction, member: discord.Member):
     try:
@@ -138,6 +199,7 @@ async def infos(interaction, member: discord.Member):
     except:
         interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
 
+# INFOSDOUBLEUP CMD
 @bot.tree.command(name="infosdoubleup", description="Afficher les statistiques générales de la mention")
 async def infosdoubleup(interaction, member: discord.Member):
     try:
@@ -171,7 +233,7 @@ async def infosdoubleup(interaction, member: discord.Member):
     except:
         interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
 
-
+# INGAME CMD
 @bot.tree.command(name="ingame", description="Voir les joueurs ingame")
 async def ingame(interaction):
     ladder = []
@@ -208,6 +270,7 @@ async def ingame(interaction):
 
     await interaction.response.send_message(ingame)
 
+# LADDER CMD
 @bot.tree.command(name="ladder", description="Classement des joueurs")
 async def ladder(interaction):
     ladder = []
@@ -238,6 +301,7 @@ async def ladder(interaction):
     sorted_ladder = sorted(ladder, key=custom_sort, reverse=True)
     await interaction.response.send_message(sorted_ladder)
 
+# GAME CMD
 @bot.tree.command(name="game", description="Afficher les statistiques générales de la mention")
 async def game(interaction, member: discord.Member):
     puuid = user_id[member.id][0]['puuid']
@@ -278,6 +342,7 @@ async def get_player_info(session, riot_key, player_id):
     async with session.get(url) as response:
         return await response.json()
 
+# MATCHES CMD
 @bot.tree.command(name="matches", description="Afficher les détails de la dernière partie jouée par le joueur")
 async def matches(interaction, member: discord.Member, last: int):
     puuid = user_id[member.id][0]['puuid']
