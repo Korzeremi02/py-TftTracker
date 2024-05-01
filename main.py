@@ -93,18 +93,41 @@ async def define(interaction, member: discord.Member, riot_name: str, tag: str, 
 # IMAGE CMD
 @bot.tree.command(name="image", description="Image")
 async def image(interaction, member: discord.Member):
+    # print("user_profile")
+    # print(user_profile)
+    # print("user_id")
+    # print(user_id)
+    # print("user_data")
+    # print(user_data)
+    # print("user_secret")
+    # print(user_secret)
+    id = user_id[member.id][0]['id']
+    profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
+    res = requests.get(profile_data, timeout=127)
+    user_profile = res.json()
+    print(user_data[member.id]["riot_name"])
+    print(user_profile)
+    for profile in user_profile:
+        if profile["queueType"] == "RANKED_TFT":
+            ranked_profile = profile
+            break
+    else:
+        await interaction.response.send_message("Profil RANKED_TFT introuvable.")
+        return
+    totalGame = str(ranked_profile['wins'] + ranked_profile['losses'])
+    winGame = str(ranked_profile['wins'])
+    topGame = str(ranked_profile['wins'] / int(totalGame) * 100)
     label = ImageFont.truetype("./assets/fonts/inter.ttf", 38)
     userfont = ImageFont.truetype("./assets/fonts/inter.ttf", 50)
     descfont = ImageFont.truetype("./assets/fonts/inter.ttf", 42)
     card = Editor("./assets/png/card.png")
-    card.text((90,730), text="135", color="#ffffff", font=label)
-    card.text((270,730), text="76", color="#ffffff", font=label)
-    card.text((405,730), text="66.7%", color="#ffffff", font=label)
-    card.text((95,500), text=member.name, color="#ffffff", font=userfont)
-    card.text((110,580), text="Diamond IV 35 LP", color="#ffffff", font=descfont)
+    card.text((90,730), text=totalGame, color="#ffffff", font=label)
+    card.text((270,730), text=winGame, color="#ffffff", font=label)
+    card.text((405,730), text=topGame, color="#ffffff", font=label)
+    card.text((95,500), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
+    card.text((110,580), text=f"{ranked_profile['tier']} {ranked_profile['rank']} {ranked_profile['leaguePoints']} LP", color="#ffffff", font=descfont)
     card.rectangle((50,190),width=480,height=260,fill="red")
     card.ellipse((230,50),width=120,height=120,fill="blue")
-    # card.text((10,10), text=member.name)
     file = File(fp=card.image_bytes, filename="pic.png")
     await interaction.response.send_message(file=file)
 
