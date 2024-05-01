@@ -93,14 +93,6 @@ async def define(interaction, member: discord.Member, riot_name: str, tag: str, 
 # IMAGE CMD
 @bot.tree.command(name="image", description="Image")
 async def image(interaction, member: discord.Member):
-    # print("user_profile")
-    # print(user_profile)
-    # print("user_id")
-    # print(user_id)
-    # print("user_data")
-    # print(user_data)
-    # print("user_secret")
-    # print(user_secret)
     id = user_id[member.id][0]['id']
     profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
     res = requests.get(profile_data, timeout=127)
