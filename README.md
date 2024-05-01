@@ -18,8 +18,8 @@ TFT-Trackers is a powerful discord bot written in Python for TeamFight Tacticts.
 |/display|Display current memory|
 |/erase|Format bot memory|
 |/game @|Display all players in @'s game|
-|/help|Displaying help|
-|/image|Generate card|
+|/helpme|Displaying help|
+|/image @|Generate card|
 |/infos @|Profil in Solo Ranked|
 |/infosdoubleup @|Profil in DoubleUp Ranked|
 |/ingame|Display all players in game|
