@@ -38,7 +38,22 @@ async def on_ready():
 @bot.tree.command(name="help", description="Afficher l'aide du bot TeamTracker")
 async def helpme(interaction):
     try:
-        await interaction.response.send_message(f"Aide TeamTracker \n\nCommandes : \n**/helpme ** : Afficher aide bot TT \n**/ping ** : Ping TT \n**/define ** : Ajouter utilisateur discord dans TT \n**/display ** : Afficher utilisateur TT \n**/erase ** : Effacer mémoire TT \n**/infos** : Afficher stats actuelles mention Discord ")
+        await interaction.response.send_message(
+                    f"Aide TeamTracker \n\nCommandes : \n"
+                    "**/define** : Ajouter membre Discord dans TT \n"
+                    "**/display** : Afficher utilisateur(s) TT \n"
+                    "**/erase** : Effacer mémoire TT \n"
+                    "**/game @** : Afficher les stats du joueur mentionné en partie \n"
+                    "**/help** : Afficher aide bot TT \n"
+                    "**/image @** : Afficher une carte personnalisée pour le membre \n"
+                    "**/infos @** : Afficher stats actuelles mention Discord \n"
+                    "**/infosdoubleup @** : Afficher stats DBup actuelles mention Discord \n"
+                    "**/ingame** : Voir les joueurs en partie \n"
+                    "**/ladder** : Afficher le classement des joueurs \n"
+                    "**/matches @** : Afficher les détails de la dernière partie jouée par le joueur"
+                    "**/ping** : Ping TT \n"
+                    "**/showsecret** : Ping TT \n"
+                )
     except:
         await interaction.response.send_message(f"Erreur lors de l'affichage de l'aide")
 
