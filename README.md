@@ -17,16 +17,16 @@ TFT-Trackers is a powerful discord bot written in Python for TeamFight Tacticts.
 |/define|Add new player|
 |/display|Display current memory|
 |/erase|Format bot memory|
+|/game @|Display all players in @'s game|
 |/help|Displaying help|
 |/image|Generate card|
 |/infos @|Profil in Solo Ranked|
 |/infosdoubleup @|Profil in DoubleUp Ranked|
+|/ingame|Display all players in game|
 |/ladder|Display leaderboard|
+|/matches @|Display @'s matches details|
 |/ping|Ping bot|
 |/showsecret|Display current secret infos|
-|/ingame|Display all players in game|
-|/game @|Display all players in @'s game|
-|/matches @|Display @'s matches details|
 ## Repository arborescence
 |Branch name|Description|
 |------|------|
