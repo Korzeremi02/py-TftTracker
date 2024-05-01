@@ -117,16 +117,24 @@ async def infos(interaction, member: discord.Member):
             user_profile = res.json()
         except:
             interaction.response.send_message(f"Erreur lors de la requete API pour la récupération et/ou l'affichage des infos")
+
+        compt = 0    
         for item in user_profile:
-            temp_dict = {
-                "queueType": item["queueType"],
-                "tier": item["tier"],
-                "rank": item["rank"],
-                "leaguePoints": item["leaguePoints"],
-                "wins": item["wins"],
-                "losses": item["losses"]
-            }
-        await interaction.response.send_message(temp_dict)
+            compt += 1
+            if compt > 2:
+                await interaction.response.send_message("Ce joueur n'a pas de classement en Ranked Solo !")
+
+            if item["queueType"] == "RANKED_TFT":
+                temp_dict = {
+                    "queueType": item["queueType"],
+                    "tier": item["tier"],
+                    "rank": item["rank"],
+                    "leaguePoints": item["leaguePoints"],
+                    "wins": item["wins"],
+                    "losses": item["losses"]
+                }
+                await interaction.response.send_message(temp_dict)
+            
     except:
         interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
 
@@ -143,16 +151,23 @@ async def infosdoubleup(interaction, member: discord.Member):
             user_profile = res.json()
         except:
             interaction.response.send_message(f"Erreur lors de la requete API pour la récupération et/ou l'affichage des infos")
+            
+        compt = 0    
         for item in user_profile:
-            temp_dict = {
-                "queueType": item["queueType"],
-                "tier": item["tier"],
-                "rank": item["rank"],
-                "leaguePoints": item["leaguePoints"],
-                "wins": item["wins"],
-                "losses": item["losses"]
-            }
-            await interaction.response.send_message(temp_dict)
+            compt += 1
+            if compt > 2:
+                await interaction.response.send_message("Ce joueur n'a pas de classement en DoubleUp !")
+
+            if item["queueType"] == "RANKED_TFT_DOUBLE_UP":
+                temp_dict = {
+                    "queueType": item["queueType"],
+                    "tier": item["tier"],
+                    "rank": item["rank"],
+                    "leaguePoints": item["leaguePoints"],
+                    "wins": item["wins"],
+                    "losses": item["losses"]
+                }
+                await interaction.response.send_message(temp_dict)
     except:
         interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
 
@@ -205,9 +220,9 @@ async def ladder(interaction):
 
         temp = []
         temp.append(str(user_id[list(user_id.keys())[compt]][0]["discord_member"]).capitalize())
-        temp.append(str(user_profile[-1]['tier']))
-        temp.append(str(user_profile[-1]['rank']))
-        temp.append(str(user_profile[-1]['leaguePoints']) + " LP")
+        temp.append(str(user_profile[len(user_profile) - 1]['tier']))
+        temp.append(str(user_profile[len(user_profile) - 1]['rank']))
+        temp.append(str(user_profile[len(user_profile) - 1]['leaguePoints']) + " LP")
         ladder.append(temp)
         compt += 1
 
@@ -249,9 +264,9 @@ async def game(interaction, member: discord.Member):
             for participant, info in zip(res['participants'], player_infos):
                 temp = [
                     participant['riotId'],
-                    info[0]['tier'],
-                    info[0]['rank'],
-                    f"{info[0]['leaguePoints']} LP"
+                    info[len(info) - 1]['tier'],
+                    info[len(info) - 1]['rank'],
+                    f"{info[len(info) - 1]['leaguePoints']} LP"
                 ]
                 players_ingame.append(temp)
 
