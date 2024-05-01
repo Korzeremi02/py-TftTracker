@@ -112,8 +112,6 @@ async def image(interaction, member: discord.Member):
     profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
     res = requests.get(profile_data, timeout=127)
     user_profile = res.json()
-    print(user_data[member.id]["riot_name"])
-    print(user_profile)
     for profile in user_profile:
         if profile["queueType"] == "RANKED_TFT":
             ranked_profile = profile
@@ -123,7 +121,7 @@ async def image(interaction, member: discord.Member):
         return
     totalGame = str(ranked_profile['wins'] + ranked_profile['losses'])
     winGame = str(ranked_profile['wins'])
-    topGame = str(ranked_profile['wins'] / int(totalGame) * 100)
+    topGame = str(round(ranked_profile['wins'] / int(totalGame) * 100, 2))
     label = ImageFont.truetype("./assets/fonts/inter.ttf", 38)
     userfont = ImageFont.truetype("./assets/fonts/inter.ttf", 50)
     descfont = ImageFont.truetype("./assets/fonts/inter.ttf", 42)
@@ -334,7 +332,6 @@ async def game(interaction, member: discord.Member):
                 ]
                 players_ingame.append(temp)
 
-            print(players_ingame)
             await interaction.response.send_message(players_ingame)
 
 async def get_player_info(session, riot_key, player_id):
