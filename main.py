@@ -44,7 +44,7 @@ async def helpme(interaction):
                     "**/display** : Afficher utilisateur(s) TT \n"
                     "**/erase** : Effacer mémoire TT \n"
                     "**/game @** : Afficher les stats du joueur mentionné en partie \n"
-                    "**/help** : Afficher aide bot TT \n"
+                    "**/helpme** : Afficher aide bot TT \n"
                     "**/image @** : Afficher une carte personnalisée pour le membre \n"
                     "**/infos @** : Afficher stats actuelles mention Discord \n"
                     "**/infosdoubleup @** : Afficher stats DBup actuelles mention Discord \n"
