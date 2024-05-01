@@ -6,6 +6,8 @@ from discord import File
 from dotenv import load_dotenv
 from easy_pil import Editor, load_image_async, Font
 from PIL import Image, ImageDraw, ImageFont
+import aiohttp
+import asyncio
 
 load_dotenv()
 
@@ -180,13 +182,39 @@ async def infosdoubleup(interaction, member: discord.Member):
 
 @bot.tree.command(name="ingame", description="Voir les joueurs ingame")
 async def ingame(interaction):
-    compt = 0
+    ladder = []
+    players = []
     ingame = []
-    
+    compt = 0
+
     for user_key in user_id.keys():
         temp = []
-        temp.append([user_id[i]['summon']])
-        compt +=1
+        name = user_id[user_key][0]["discord_member"]
+        puuid = user_id[user_key][0]["puuid"]
+
+        temp.append(name)
+        temp.append(puuid)
+        players.append(temp)
+
+    for player in players:
+        current = 'https://euw1.api.riotgames.com/lol/spectator/tft/v5/active-games/by-puuid/' + player[1] + '?api_key=' + riot_key
+        res = requests.get(current, timeout = 127)
+        res = [dict(res.json())]
+
+        try:
+            message = res[0]['status']['message']
+        except KeyError:
+            message = res[0]['gameId']
+
+        if message == "Data not found - spectator game info isn't found":
+            ingame.append(player[0])
+            ingame.append(False)
+        else :
+            ingame.append(player[0])
+            ingame.append(True)
+            compt += 1
+
+    await interaction.response.send_message(ingame)
 
 @bot.tree.command(name="ladder", description="Classement des joueurs")
 async def ladder(interaction):
@@ -216,12 +244,85 @@ async def ladder(interaction):
         return (division_rank, division_level, lp)
 
     sorted_ladder = sorted(ladder, key=custom_sort, reverse=True)
-
-    # # for player in sorted_ladder:
-    # #     print(player)
-
-
     await interaction.response.send_message(sorted_ladder)
+
+@bot.tree.command(name="game", description="Afficher les statistiques générales de la mention")
+async def game(interaction, member: discord.Member):
+    puuid = user_id[member.id][0]['puuid']
+    current = f"https://euw1.api.riotgames.com/lol/spectator/tft/v5/active-games/by-puuid/{puuid}?api_key={riot_key}"
+    
+    async with aiohttp.ClientSession() as session:
+        async with session.get(current) as response:
+            res = await response.json()
+
+        if 'status' in res:
+            message = res['status'].get('message')
+            if message:
+                await interaction.response.send_message(f"{user_id[member.id][0]['discord_member'].capitalize()} n'est actuellement pas en game !")
+        else:
+            players_ingame = []
+            tasks = []
+            for participant in res['participants']:
+                player_id = participant['summonerId']
+                task = asyncio.create_task(get_player_info(session, riot_key, player_id))
+                tasks.append(task)
+
+            player_infos = await asyncio.gather(*tasks)
+
+            for participant, info in zip(res['participants'], player_infos):
+                temp = [
+                    participant['riotId'],
+                    info[0]['tier'],
+                    info[0]['rank'],
+                    f"{info[0]['leaguePoints']} LP"
+                ]
+                players_ingame.append(temp)
+
+            print(players_ingame)
+            await interaction.response.send_message(players_ingame)
+
+async def get_player_info(session, riot_key, player_id):
+    url = f"https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/{player_id}?api_key={riot_key}"
+    async with session.get(url) as response:
+        return await response.json()
+
+@bot.tree.command(name="matches", description="Afficher les détails de la dernière partie jouée par le joueur")
+async def matches(interaction, member: discord.Member, last: int):
+    puuid = user_id[member.id][0]['puuid']
+    matches_url = f"https://europe.api.riotgames.com/tft/match/v1/matches/by-puuid/{puuid}/ids?start=0&count=10&api_key={riot_key}"
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(matches_url) as response:
+            matches_array = await response.json()
+
+    match_details_url = f"https://europe.api.riotgames.com/tft/match/v1/matches/{matches_array[last]}?api_key={riot_key}"
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(match_details_url) as response:
+            match_details = await response.json()
+
+    participant_data = get_participant_data(match_details, puuid)
+    participant_info = extract_participant_info(participant_data)
+
+    print(participant_info)
+    # await interaction.response.send_message(participant_info)
+    await interaction.response.send_message("Data trop longue ! Check ton terminal.")
+
+def get_participant_data(data, puuid):
+    for participant in data['info']['participants']:
+        if participant['puuid'] == puuid:
+            return participant
+    return None
+
+def extract_participant_info(participant_data):
+    extracted_info = {
+        "augments": participant_data["augments"],
+        "level": participant_data["level"],
+        "placement": participant_data["placement"],
+        "traits": participant_data["traits"],
+        "units": participant_data["units"]
+    }
+    return extracted_info
 
 
 # @tasks.loop(seconds = 60)
@@ -233,4 +334,4 @@ bot.run(discord_key)
 
 # ------------------------------------------------------------------------------------------
 
-# Si les joueurs sont en game, alors afficher les datas de manière automatique sans commande
+# Si les joueurs sont en game, alors afficher les datas de manière automatique sans commandes
