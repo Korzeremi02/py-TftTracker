@@ -1,3 +1,4 @@
+# IMPORT PKG
 import discord
 import os
 import requests
@@ -9,21 +10,23 @@ from PIL import Image, ImageDraw, ImageFont
 import aiohttp
 import asyncio
 
+# PARAMS
 load_dotenv()
-
 intents = discord.Intents.default()
 intents.members =True
-
 bot = commands.Bot(command_prefix='/', intents=intents)
 
+# KEYS
 riot_key = os.getenv("RIOT_KEY")
 discord_key = os.getenv("DISCORD_KEY")
 
+# INIT DICTIONARIES
 user_id = {}
 user_secret = {}
 user_data = {}
 user_profile = {}
 
+# ON BOT STARTUP, DO...
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="/help"))
@@ -31,6 +34,7 @@ async def on_ready():
     synced = await bot.tree.sync()
     print(f"Synchronisation de {len(synced)} commandes")
 
+# HELP CMD
 @bot.tree.command(name="help", description="Afficher l'aide du bot TeamTracker")
 async def helpme(interaction):
     try:
@@ -38,6 +42,7 @@ async def helpme(interaction):
     except:
         await interaction.response.send_message(f"Erreur lors de l'affichage de l'aide")
 
+# PING CMD
 @bot.tree.command(name="ping", description="Effectuer un ping vers le bot TeamTracker")
 async def ping(interaction):
     try:
@@ -45,6 +50,7 @@ async def ping(interaction):
     except:
         await interaction.response.send_message(f"Erreur lors du ping")
 
+# DEFINE CMD
 @bot.tree.command(name="define", description="Ajouter un utilisateur Discord à TeamTracker")
 async def define(interaction, member: discord.Member, riot_name: str, tag: str, region: str, status: bool):
     try:
@@ -84,6 +90,7 @@ async def define(interaction, member: discord.Member, riot_name: str, tag: str, 
     except:
         interaction.response.send_message("Erreur majeure lors de l'ajout de la mention Discord")
 
+# IMAGE CMD
 @bot.tree.command(name="image", description="Image")
 async def image(interaction, member: discord.Member):
     label = ImageFont.truetype("./assets/fonts/inter.ttf", 38)
@@ -100,10 +107,8 @@ async def image(interaction, member: discord.Member):
     # card.text((10,10), text=member.name)
     file = File(fp=card.image_bytes, filename="pic.png")
     await interaction.response.send_message(file=file)
-    # try:
-    # except:
-    #     interaction.response.send_message(f"Erreur lors de la génération de la carte")
 
+# SHOWSECRET CMD
 @bot.tree.command(name="showsecret", description="show")
 async def showsecret(interaction):
     try:
@@ -111,6 +116,7 @@ async def showsecret(interaction):
     except:
         interaction.response.send_message(f"Erreur lors de l'affichage de user_secret")
 
+# DISPLAY CMD
 @bot.tree.command(name="display", description="Afficher les données de TftTracker")
 async def display(interaction):
     try:
@@ -118,6 +124,7 @@ async def display(interaction):
     except:
         interaction.response.send_message("Erreur lors de l'affichage des données avec cmd display")
 
+# ERASE CMD
 @bot.tree.command(name="erase", description="Effacer les données de TeamTracker (DEBUG)")
 async def erase(interaction):
     try:
@@ -127,6 +134,7 @@ async def erase(interaction):
     except:
         interaction.response.send_message("Erreur lors de la suppresion de user_data")
 
+# INFOS CMD
 @bot.tree.command(name="infos", description="Afficher les statistiques générales de la mention")
 async def infos(interaction, member: discord.Member):
     try:
@@ -153,6 +161,7 @@ async def infos(interaction, member: discord.Member):
     except:
         interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
 
+# INFOSDOUBLEUP CMD
 @bot.tree.command(name="infosdoubleup", description="Afficher les statistiques générales de la mention")
 async def infosdoubleup(interaction, member: discord.Member):
     try:
@@ -179,7 +188,7 @@ async def infosdoubleup(interaction, member: discord.Member):
     except:
         interaction.response.send_message(f"Erreur de récupération et/ou affichage infos joueur")
 
-
+# INGAME CMD
 @bot.tree.command(name="ingame", description="Voir les joueurs ingame")
 async def ingame(interaction):
     ladder = []
@@ -216,6 +225,7 @@ async def ingame(interaction):
 
     await interaction.response.send_message(ingame)
 
+# LADDER CMD
 @bot.tree.command(name="ladder", description="Classement des joueurs")
 async def ladder(interaction):
     ladder = []
@@ -246,6 +256,7 @@ async def ladder(interaction):
     sorted_ladder = sorted(ladder, key=custom_sort, reverse=True)
     await interaction.response.send_message(sorted_ladder)
 
+# GAME CMD
 @bot.tree.command(name="game", description="Afficher les statistiques générales de la mention")
 async def game(interaction, member: discord.Member):
     puuid = user_id[member.id][0]['puuid']
@@ -286,6 +297,7 @@ async def get_player_info(session, riot_key, player_id):
     async with session.get(url) as response:
         return await response.json()
 
+# MATCHES CMD
 @bot.tree.command(name="matches", description="Afficher les détails de la dernière partie jouée par le joueur")
 async def matches(interaction, member: discord.Member, last: int):
     puuid = user_id[member.id][0]['puuid']
