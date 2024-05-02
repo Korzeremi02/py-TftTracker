@@ -153,7 +153,7 @@ async def infos(interaction, member: discord.Member):
     resized_icon = icon_data.resize((new_width, new_height))
 
     mask = Image.new("L", (new_width, new_height), 0)
-    draw = ImageDraw.Draw(mask)
+    draw = ImageDraw.Draw(mask) 
     draw.ellipse((0, 0, new_width, new_height), fill=255)
     resized_icon.putalpha(mask)
 
@@ -265,7 +265,6 @@ async def infosdoubleup(interaction, member: discord.Member):
     descfont = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 25)
     banner = Editor("./assets/png/banner.png")
     tier = ""
-    print()
     
     if ranked_profile['tier'].capitalize() == "Grandmaster":
         tier = "GrandMaster"
@@ -472,6 +471,12 @@ async def ladder(interaction):
     sorted_ladder = sorted(ladder, key=custom_sort, reverse=True)
     await interaction.response.send_message(sorted_ladder)
 
+# @bot.tree.command(name="image", description="Afficher tous les joueurs de la partie")
+# async def image(interaction, member: discord.Member):
+#     puuid = user_id[member.id][0]['puuid']
+#     current = f"https://euw1.api.riotgames.com/lol/spectator/tft/v5/active-games/by-puuid/{puuid}?api_key={riot_key}"
+
+
 # GAME CMD
 @bot.tree.command(name="game", description="Afficher les statistiques générales de la mention")
 async def game(interaction, member: discord.Member):
@@ -505,7 +510,14 @@ async def game(interaction, member: discord.Member):
                 ]
                 players_ingame.append(temp)
 
-            await interaction.response.send_message(players_ingame)
+            label = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 15)
+            game = Editor("./assets/png/game_summary.png")
+
+            game.text((total_pos_x, 110), text=totalGame, color="#D0D0D0", font=descfont)
+            
+
+            file = File(fp=game.image_bytes, filename="pic.png")
+            await interaction.response.send_message(file=file)
 
 async def get_player_info(session, riot_key, player_id):
     url = f"https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/{player_id}?api_key={riot_key}"
