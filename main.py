@@ -168,7 +168,6 @@ async def image(interaction, member: discord.Member):
 
     banner.text((550,80), text=f"Ranked Solo", color="#A3A3A3", font=label)
     banner.text((550,100), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
-    # banner.text((550,150), text=f"{ranked_profile['tier'].capitalize()} {ranked_profile['rank']} {ranked_profile['leaguePoints']} LP", color="#ffffff", font=userfont)
 
     tier_text = ranked_profile['tier'].capitalize()
     rank_lp_text = f"{ranked_profile['rank']} {ranked_profile['leaguePoints']} LP"
@@ -213,13 +212,37 @@ async def image(interaction, member: discord.Member):
     else:
         color_rank = "#fff"
 
+    total_pos_x = 900
+    win_pos_x = 1027
+    top_pos_x = 1125
+
+    if len(totalGame) == 1:
+        total_pos_x = 910
+    elif len(totalGame) == 2:
+        total_pos_x = 900
+    elif len(totalGame) == 3:
+        total_pos_x = 890
+
+    if len(winGame) == 1:
+        win_pos_x = 1037
+    elif len(winGame) == 2:
+        win_pos_x = 1027
+    elif len(winGame) == 3:
+        win_pos_x = 1017
+
+    if len(topGame) == 1:
+        top_pos_x = 1135
+    elif len(topGame) == 2:
+        top_pos_x = 1125
+    elif len(topGame) == 3:
+        top_pos_x = 1115
 
 
     banner.text((x_position_for_tier, y_position_for_tier), text=tier_text, color=color_rank, font=userfont)
     banner.text((x_position_for_rank_lp, y_position_for_rank_lp), text=rank_lp_text, color="#ffffff", font=userfont)
-    banner.text((900,110), text=totalGame, color="#D0D0D0", font=descfont)
-    banner.text((1027,110), text=winGame, color="#D0D0D0", font=descfont)
-    banner.text((1125,110), text=topGame, color="#D0D0D0", font=descfont)
+    banner.text((total_pos_x, 110), text=totalGame, color="#D0D0D0", font=descfont)
+    banner.text((win_pos_x, 110), text=winGame, color="#D0D0D0", font=descfont)
+    banner.text((top_pos_x, 110), text=topGame, color="#D0D0D0", font=descfont)
 
 
     file = File(fp=banner.image_bytes, filename="pic.png")
