@@ -9,6 +9,7 @@ from easy_pil import Editor, load_image_async, Font
 from PIL import Image, ImageDraw, ImageFont
 import aiohttp
 import asyncio
+import io
 
 # PARAMS
 load_dotenv()
@@ -121,19 +122,107 @@ async def image(interaction, member: discord.Member):
         return
     totalGame = str(ranked_profile['wins'] + ranked_profile['losses'])
     winGame = str(ranked_profile['wins'])
-    topGame = str(round(ranked_profile['wins'] / int(totalGame) * 100, 2))
-    label = ImageFont.truetype("./assets/fonts/inter.ttf", 38)
-    userfont = ImageFont.truetype("./assets/fonts/inter.ttf", 50)
-    descfont = ImageFont.truetype("./assets/fonts/inter.ttf", 42)
-    card = Editor("./assets/png/card.png")
-    card.text((90,730), text=totalGame, color="#ffffff", font=label)
-    card.text((270,730), text=winGame, color="#ffffff", font=label)
-    card.text((405,730), text=topGame, color="#ffffff", font=label)
-    card.text((95,500), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
-    card.text((110,580), text=f"{ranked_profile['tier']} {ranked_profile['rank']} {ranked_profile['leaguePoints']} LP", color="#ffffff", font=descfont)
-    card.rectangle((50,190),width=480,height=260,fill="red")
-    card.ellipse((230,50),width=120,height=120,fill="blue")
-    file = File(fp=card.image_bytes, filename="pic.png")
+    topGame = str(round(ranked_profile['wins'] / int(totalGame) * 100, 1)) + "%"
+    # card = Editor("./assets/png/card.png")
+    # card.text((95,500), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
+    # card.text((110,580), text=f"{ranked_profile['tier']} {ranked_profile['rank']} {ranked_profile['leaguePoints']} LP", color="#ffffff", font=descfont)
+    # card.rectangle((50,190),width=480,height=260,fill="red")
+    # card.ellipse((230,50),width=120,height=120,fill="blue")
+    # file = File(fp=card.image_bytes, filename="pic.png")
+    # await interaction.response.send_message(file=file)
+
+    label = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 15)
+    userfont = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 25)
+    descfont = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 25)
+    banner = Editor("./assets/png/banner.png")
+    tier = ""
+    print()
+    
+    if ranked_profile['tier'].capitalize() == "Grandmaster":
+        tier = "GrandMaster"
+    else :
+        tier = ranked_profile['tier'].capitalize()
+
+    response = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-regalia/TFT_Regalia_" + tier + ".png")
+    image_data = Image.open(io.BytesIO(response.content))
+
+    new_width = 300
+    new_height = 250
+    resized_image = image_data.resize((new_width, new_height))
+    image_position = (225, 0)
+    banner.paste(resized_image, image_position)
+
+    icon_url = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/profileicon/" + str(user_id[member.id][0]["profileIconId"]) + ".png")
+    icon_data = Image.open(io.BytesIO(icon_url.content))
+    new_width = 110
+    new_height = 110
+    resized_icon = icon_data.resize((new_width, new_height))
+
+    mask = Image.new("L", (new_width, new_height), 0)
+    draw = ImageDraw.Draw(mask)
+    draw.ellipse((0, 0, new_width, new_height), fill=255)
+    resized_icon.putalpha(mask)
+
+    image_position = (95, 75)
+    banner.paste(resized_icon, image_position)
+
+    banner.text((550,80), text=f"Ranked Solo", color="#A3A3A3", font=label)
+    banner.text((550,100), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
+    # banner.text((550,150), text=f"{ranked_profile['tier'].capitalize()} {ranked_profile['rank']} {ranked_profile['leaguePoints']} LP", color="#ffffff", font=userfont)
+
+    tier_text = ranked_profile['tier'].capitalize()
+    rank_lp_text = f"{ranked_profile['rank']} {ranked_profile['leaguePoints']} LP"
+    x_position_for_tier = 550
+    y_position_for_tier = 150
+
+    x_position_for_rank_lp = 720
+    y_position_for_rank_lp = 150
+
+    color_rank = ""
+    
+    if ranked_profile['tier'].capitalize() == "Iron":
+        color_rank = "#582B0A"
+        x_position_for_rank_lp = 620
+    elif ranked_profile['tier'].capitalize() == "Bronze":
+        color_rank = "#B64D01"
+        x_position_for_rank_lp = 620
+    elif ranked_profile['tier'].capitalize() == "Silver":
+        color_rank = "#8A8A8A"
+        x_position_for_rank_lp = 630
+    elif ranked_profile['tier'].capitalize() == "Gold":
+        color_rank = "#FFC700"
+        x_position_for_rank_lp = 619
+    elif ranked_profile['tier'].capitalize() == "Platinum":
+        color_rank = "#2c7f8b"
+        x_position_for_rank_lp = 665
+    elif ranked_profile['tier'].capitalize() == "Emerald":
+        color_rank = "#02E750"
+        x_position_for_rank_lp = 657
+    elif ranked_profile['tier'].capitalize() == "Diamond":
+        color_rank = "#5E6EFF"
+        x_position_for_rank_lp = 665
+    elif ranked_profile['tier'].capitalize() == "Master":
+        color_rank = "#B251D3"
+        x_position_for_rank_lp = 643
+    elif ranked_profile['tier'].capitalize() == "Grandmaster":
+        color_rank = "#9e3836"
+        x_position_for_rank_lp = 725
+    elif ranked_profile['tier'].capitalize() == "Challenger":
+        color_rank = "#9DF9FF"
+        x_position_for_rank_lp = 695
+    else:
+        color_rank = "#fff"
+
+
+
+    banner.text((x_position_for_tier, y_position_for_tier), text=tier_text, color=color_rank, font=userfont)
+    banner.text((x_position_for_rank_lp, y_position_for_rank_lp), text=rank_lp_text, color="#ffffff", font=userfont)
+    banner.text((900,110), text=totalGame, color="#D0D0D0", font=descfont)
+    banner.text((1027,110), text=winGame, color="#D0D0D0", font=descfont)
+    banner.text((1125,110), text=topGame, color="#D0D0D0", font=descfont)
+
+
+    file = File(fp=banner.image_bytes, filename="pic.png")
     await interaction.response.send_message(file=file)
 
 # SHOWSECRET CMD
