@@ -140,31 +140,6 @@ async def infos(interaction, member: discord.Member):
     response = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-regalia/TFT_Regalia_" + tier + ".png")
     image_data = Image.open(io.BytesIO(response.content))
 
-    new_width = 300
-    new_height = 250
-    resized_image = image_data.resize((new_width, new_height))
-    image_position = (225, 0)
-    banner.paste(resized_image, image_position)
-
-    icon_url = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/profileicon/" + str(user_id[member.id][0]["profileIconId"]) + ".png")
-    icon_data = Image.open(io.BytesIO(icon_url.content))
-    new_width = 110
-    new_height = 110
-    resized_icon = icon_data.resize((new_width, new_height))
-
-    mask = Image.new("L", (new_width, new_height), 0)
-    draw = ImageDraw.Draw(mask) 
-    draw.ellipse((0, 0, new_width, new_height), fill=255)
-    resized_icon.putalpha(mask)
-
-    image_position = (95, 75)
-    banner.paste(resized_icon, image_position)
-
-    banner.text((550,80), text=f"Ranked Solo", color="#A3A3A3", font=label)
-    banner.text((550,100), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
-
-    tier_text = ranked_profile['tier'].capitalize()
-    rank_lp_text = f"{ranked_profile['rank']} {ranked_profile['leaguePoints']} LP"
     x_position_for_tier = 550
     y_position_for_tier = 150
 
@@ -201,7 +176,7 @@ async def infos(interaction, member: discord.Member):
         color_rank = "#9e3836"
         x_position_for_rank_lp = 725
     elif ranked_profile['tier'].capitalize() == "Challenger":
-        color_rank = "#9DF9FF"
+        color_rank = "#226581"
         x_position_for_rank_lp = 695
     else:
         color_rank = "#fff"
@@ -231,6 +206,34 @@ async def infos(interaction, member: discord.Member):
     elif len(topGame) == 3:
         top_pos_x = 1117
 
+    banner.ellipse((90, 70), width=120,height=120, fill=color_rank)
+
+    new_width = 300
+    new_height = 250
+    resized_image = image_data.resize((new_width, new_height))
+    image_position = (225, 0)
+    banner.paste(resized_image, image_position)
+
+    icon_url = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/profileicon/" + str(user_id[member.id][0]["profileIconId"]) + ".png")
+    icon_data = Image.open(io.BytesIO(icon_url.content))
+    new_width = 110
+    new_height = 110
+    resized_icon = icon_data.resize((new_width, new_height))
+
+    mask = Image.new("L", (new_width, new_height), 0)
+    draw = ImageDraw.Draw(mask) 
+    draw.ellipse((0, 0, new_width, new_height), fill=255)
+    resized_icon.putalpha(mask)
+
+    image_position = (95, 75)
+    banner.paste(resized_icon, image_position)
+
+    banner.text((550,80), text=f"Ranked Solo", color="#A3A3A3", font=label)
+    banner.text((550,100), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
+
+    tier_text = ranked_profile['tier'].capitalize()
+    rank_lp_text = f"{ranked_profile['rank']} {ranked_profile['leaguePoints']} LP"
+    
 
     banner.text((x_position_for_tier, y_position_for_tier), text=tier_text, color=color_rank, font=userfont)
     banner.text((x_position_for_rank_lp, y_position_for_rank_lp), text=rank_lp_text, color="#ffffff", font=userfont)
@@ -274,31 +277,6 @@ async def infosdoubleup(interaction, member: discord.Member):
     response = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-regalia/TFT_Regalia_" + tier + ".png")
     image_data = Image.open(io.BytesIO(response.content))
 
-    new_width = 300
-    new_height = 250
-    resized_image = image_data.resize((new_width, new_height))
-    image_position = (225, 0)
-    banner.paste(resized_image, image_position)
-
-    icon_url = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/profileicon/" + str(user_id[member.id][0]["profileIconId"]) + ".png")
-    icon_data = Image.open(io.BytesIO(icon_url.content))
-    new_width = 110
-    new_height = 110
-    resized_icon = icon_data.resize((new_width, new_height))
-
-    mask = Image.new("L", (new_width, new_height), 0)
-    draw = ImageDraw.Draw(mask)
-    draw.ellipse((0, 0, new_width, new_height), fill=255)
-    resized_icon.putalpha(mask)
-
-    image_position = (95, 75)
-    banner.paste(resized_icon, image_position)
-
-    banner.text((550,80), text=f"Ranked DoubleUp", color="#A3A3A3", font=label)
-    banner.text((550,100), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
-
-    tier_text = ranked_profile['tier'].capitalize()
-    rank_lp_text = f"{ranked_profile['rank']} {ranked_profile['leaguePoints']} LP"
     x_position_for_tier = 550
     y_position_for_tier = 150
 
@@ -340,6 +318,8 @@ async def infosdoubleup(interaction, member: discord.Member):
     else:
         color_rank = "#fff"
 
+    banner.ellipse((90, 70), width=120,height=120, fill=color_rank)
+
     total_pos_x = 900
     win_pos_x = 1027
     top_pos_x = 1125
@@ -364,6 +344,32 @@ async def infosdoubleup(interaction, member: discord.Member):
         top_pos_x = 1125
     elif len(topGame) == 3:
         top_pos_x = 1117
+
+    new_width = 300
+    new_height = 250
+    resized_image = image_data.resize((new_width, new_height))
+    image_position = (225, 0)
+    banner.paste(resized_image, image_position)
+
+    icon_url = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/profileicon/" + str(user_id[member.id][0]["profileIconId"]) + ".png")
+    icon_data = Image.open(io.BytesIO(icon_url.content))
+    new_width = 110
+    new_height = 110
+    resized_icon = icon_data.resize((new_width, new_height))
+
+    mask = Image.new("L", (new_width, new_height), 0)
+    draw = ImageDraw.Draw(mask)
+    draw.ellipse((0, 0, new_width, new_height), fill=255)
+    resized_icon.putalpha(mask)
+
+    image_position = (95, 75)
+    banner.paste(resized_icon, image_position)
+
+    banner.text((550,80), text=f"Ranked DoubleUp", color="#A3A3A3", font=label)
+    banner.text((550,100), text=f"{user_data[member.id]['riot_name']}#{user_data[member.id]['region']}", color="#ffffff", font=userfont)
+
+    tier_text = ranked_profile['tier'].capitalize()
+    rank_lp_text = f"{ranked_profile['rank']} {ranked_profile['leaguePoints']} LP"
 
 
     banner.text((x_position_for_tier, y_position_for_tier), text=tier_text, color=color_rank, font=userfont)
@@ -512,12 +518,14 @@ async def game(interaction, member: discord.Member):
 
             label = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 15)
             game = Editor("./assets/png/game_summary.png")
+            await interaction.response.send_message(players_ingame)
 
-            game.text((total_pos_x, 110), text=totalGame, color="#D0D0D0", font=descfont)
+
+            # game.text((total_pos_x, 110), text=totalGame, color="#D0D0D0", font=descfont)
             
 
-            file = File(fp=game.image_bytes, filename="pic.png")
-            await interaction.response.send_message(file=file)
+            # file = File(fp=game.image_bytes, filename="pic.png")
+            # await interaction.response.send_message(file=file)
 
 async def get_player_info(session, riot_key, player_id):
     url = f"https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/{player_id}?api_key={riot_key}"
