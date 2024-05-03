@@ -556,7 +556,6 @@ async def matches(interaction, member: discord.Member, last: int):
     participant_info = extract_participant_info(participant_data)
 
     print(participant_info)
-    # await interaction.response.send_message(participant_info)
     font = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 25)
     topfont = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 40)
     matches = Editor("./assets/png/matches.png")
@@ -609,7 +608,6 @@ async def matches(interaction, member: discord.Member, last: int):
             char_place2 += 115
             char_url = "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-champion/" + char["character_id"] + ".TFT_Set11.png"
             
-
             async with session.get(char_url) as response:
                 char_data = Image.open(io.BytesIO(await response.read()))
                 new_width = 86
@@ -617,9 +615,20 @@ async def matches(interaction, member: discord.Member, last: int):
                 resized_icon = char_data.resize((new_width, new_height))
                 image_position = (char_place2, 102)
                 matches.paste(resized_icon, image_position)
+                
+            for item in char["itemNames"]:
+                item_url = "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-item/" + item + ".png"
+                async with session.get(item_url) as response:
+                    item_data = Image.open(io.BytesIO(await response.read()))
+                    new_width = 20
+                    new_height = 20
+                    resized_icon = item_data.resize((new_width, new_height))
+                    image_position = (char_place2, 102)  # Modifiez cette position si nécessaire
+                    matches.paste(resized_icon, image_position)
 
     file = File(fp=matches.image_bytes, filename="pic.png")
     await interaction.response.send_message(file=file)
+
 
 
 def get_participant_data(data, puuid):
