@@ -536,6 +536,10 @@ async def get_player_info(session, riot_key, player_id):
 @bot.tree.command(name="matches", description="Afficher les détails de la dernière partie jouée par le joueur")
 async def matches(interaction, member: discord.Member, last: int):
     puuid = user_id[member.id][0]['puuid']
+    id = user_id[member.id][0]['id']
+    name = user_id[member.id][0]['discord_member']
+    
+    profile_data = 'https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/' + id + '?api_key=' + riot_key
     matches_url = f"https://europe.api.riotgames.com/tft/match/v1/matches/by-puuid/{puuid}/ids?start=0&count=10&api_key={riot_key}"
 
     async with aiohttp.ClientSession() as session:
@@ -553,7 +557,70 @@ async def matches(interaction, member: discord.Member, last: int):
 
     print(participant_info)
     # await interaction.response.send_message(participant_info)
-    await interaction.response.send_message("Data trop longue ! Check ton terminal.")
+    font = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 25)
+    topfont = ImageFont.truetype("./assets/fonts/Inter-ExtraBold.ttf", 40)
+    matches = Editor("./assets/png/matches.png")
+
+    augment1 = str(participant_info["augments"][0])
+    augment2 = str(participant_info["augments"][1])
+    augment3 = str(participant_info["augments"][2])
+    color_placement = ""
+    char_place = 800
+    char_place2 = 802
+
+    if participant_info["placement"] == 1:
+        color_placement = "#cbb46c"
+    elif participant_info["placement"] == 2:
+        color_placement = "#a9a9a9"
+    elif participant_info["placement"] == 3:
+        color_placement = "#7d6443"
+    elif participant_info["placement"] == 4:
+        color_placement = "#606669"
+    elif participant_info["placement"] > 4:
+        color_placement = "#494d4f"
+
+    matches.rectangle((10, 22),width=10,height=195,fill=color_placement)
+    matches.text((50, 50), text=str(participant_info["placement"]), color=color_placement, font=topfont)
+    matches.text((50, 100), text="Ranked", color="#D0D0D0", font=font)
+    matches.text((350, 250), text=str(participant_info["level"]), color="#D0D0D0", font=font)
+    matches.rectangle((200, 45),width=150,height=150,fill="red")
+    matches.text((400, 150), text=augment1, color="#D0D0D0", font=font)
+    matches.text((500, 150), text=augment2, color="#D0D0D0", font=font)
+    matches.text((600, 150), text=augment3, color="#D0D0D0", font=font)
+
+    for char in participant_info["units"]:
+        char_place += 115
+        color_box = 0
+        if char["rarity"] == 0:
+            color_box = "#b5b5b5"
+        elif char["rarity"] == 1:
+            color_box = "#14cf10"
+        elif char["rarity"] == 2:
+            color_box = "#1d50e6"
+        elif char["rarity"] == 4:
+            color_box = "#ce17dc"
+        elif char["rarity"] > 5:
+            color_box = "#b7a31c"
+
+        matches.rectangle((char_place, 100), width=90, height=90, fill=color_box)
+    
+    async with aiohttp.ClientSession() as session:
+        for char in participant_info["units"]:
+            char_place2 += 115
+            char_url = "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-champion/" + char["character_id"] + ".TFT_Set11.png"
+            
+
+            async with session.get(char_url) as response:
+                char_data = Image.open(io.BytesIO(await response.read()))
+                new_width = 86
+                new_height = 86
+                resized_icon = char_data.resize((new_width, new_height))
+                image_position = (char_place2, 102)
+                matches.paste(resized_icon, image_position)
+
+    file = File(fp=matches.image_bytes, filename="pic.png")
+    await interaction.response.send_message(file=file)
+
 
 def get_participant_data(data, puuid):
     for participant in data['info']['participants']:
