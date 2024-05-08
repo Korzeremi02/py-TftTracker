@@ -137,7 +137,7 @@ async def infos(interaction, member: discord.Member):
     else :
         tier = ranked_profile['tier'].capitalize()
 
-    response = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-regalia/TFT_Regalia_" + tier + ".png")
+    response = requests.get("https://ddragon.leagueoflegends.com/cdn/14.9.1/img/tft-regalia/TFT_Regalia_" + tier + ".png")
     image_data = Image.open(io.BytesIO(response.content))
 
     x_position_for_tier = 550
@@ -214,7 +214,7 @@ async def infos(interaction, member: discord.Member):
     image_position = (225, 0)
     banner.paste(resized_image, image_position)
 
-    icon_url = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/profileicon/" + str(user_id[member.id][0]["profileIconId"]) + ".png")
+    icon_url = requests.get("https://ddragon.leagueoflegends.com/cdn/14.9.1/img/profileicon/" + str(user_id[member.id][0]["profileIconId"]) + ".png")
     icon_data = Image.open(io.BytesIO(icon_url.content))
     new_width = 110
     new_height = 110
@@ -274,7 +274,7 @@ async def infosdoubleup(interaction, member: discord.Member):
     else :
         tier = ranked_profile['tier'].capitalize()
 
-    response = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-regalia/TFT_Regalia_" + tier + ".png")
+    response = requests.get("https://ddragon.leagueoflegends.com/cdn/14.9.1/img/tft-regalia/TFT_Regalia_" + tier + ".png")
     image_data = Image.open(io.BytesIO(response.content))
 
     x_position_for_tier = 550
@@ -351,7 +351,7 @@ async def infosdoubleup(interaction, member: discord.Member):
     image_position = (225, 0)
     banner.paste(resized_image, image_position)
 
-    icon_url = requests.get("https://ddragon.leagueoflegends.com/cdn/14.8.1/img/profileicon/" + str(user_id[member.id][0]["profileIconId"]) + ".png")
+    icon_url = requests.get("https://ddragon.leagueoflegends.com/cdn/14.9.1/img/profileicon/" + str(user_id[member.id][0]["profileIconId"]) + ".png")
     icon_data = Image.open(io.BytesIO(icon_url.content))
     new_width = 110
     new_height = 110
@@ -564,8 +564,10 @@ async def matches(interaction, member: discord.Member, last: int):
     augment2 = str(participant_info["augments"][1])
     augment3 = str(participant_info["augments"][2])
     color_placement = ""
-    char_place = 800
-    char_place2 = 802
+    char_place = 700
+    char_place2 = 702
+    item_place = 703
+    star_place = 705
 
     if participant_info["placement"] == 1:
         color_placement = "#cbb46c"
@@ -601,34 +603,66 @@ async def matches(interaction, member: discord.Member, last: int):
         elif char["rarity"] > 5:
             color_box = "#b7a31c"
 
-        matches.rectangle((char_place, 100), width=90, height=90, fill=color_box)
+        matches.rectangle((char_place, 100), width=100, height=100, fill=color_box)
     
     async with aiohttp.ClientSession() as session:
         for char in participant_info["units"]:
             char_place2 += 115
-            char_url = "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-champion/" + char["character_id"] + ".TFT_Set11.png"
+            char_url = "https://cdn.metatft.com/cdn-cgi/image/width=480,height=480,format=auto/https://cdn.metatft.com/file/metatft/champions/" + char["character_id"].lower() + ".png"
             
             async with session.get(char_url) as response:
                 char_data = Image.open(io.BytesIO(await response.read()))
-                new_width = 86
-                new_height = 86
+                new_width = 96
+                new_height = 96
                 resized_icon = char_data.resize((new_width, new_height))
                 image_position = (char_place2, 102)
                 matches.paste(resized_icon, image_position)
-                
+        
+    async with aiohttp.ClientSession() as session:
+        for char in participant_info["units"]:
+            item_place += 115
+            numb_offset = 0 
+            item_offset = 0
+
+            if len(char["itemNames"]) == 1:
+                item_offset = 36
+            elif len(char["itemNames"]) == 2:
+                item_offset = 18
+            
             for item in char["itemNames"]:
-                item_url = "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/tft-item/" + item + ".png"
+                item_url = "https://cdn.metatft.com/cdn-cgi/image/width=480,height=480,format=auto/https://cdn.metatft.com/file/metatft/items/" + item.lower() + ".png"
+                
                 async with session.get(item_url) as response:
                     item_data = Image.open(io.BytesIO(await response.read()))
-                    new_width = 20
-                    new_height = 20
+                    new_width = 28
+                    new_height = 28
                     resized_icon = item_data.resize((new_width, new_height))
-                    image_position = (char_place2, 102)  # Modifiez cette position si nécessaire
+                    image_position = (numb_offset + item_place + item_offset, 185)
                     matches.paste(resized_icon, image_position)
+                    item_offset += 32
+
+    async with aiohttp.ClientSession() as session:
+        for char in participant_info["units"]:
+            star_place += 115
+            star_offset = 0
+
+            if char["tier"] == 2:
+                star_url = "https://cdn.metatft.com/file/metatft/tiers/2.png"
+            elif char["tier"] == 3:
+                star_url = "https://cdn.metatft.com/file/metatft/tiers/3.png"
+                star_offset += 5
+            
+            async with session.get(star_url) as response:
+                star_data = Image.open(io.BytesIO(await response.read()))
+                new_width = 84
+                new_height = 28
+                resized_icon = star_data.resize((new_width, new_height))
+                image_position = (star_place + star_offset, 85)
+                matches.paste(resized_icon, image_position)
+
 
     file = File(fp=matches.image_bytes, filename="pic.png")
     await interaction.response.send_message(file=file)
-
 
 
 def get_participant_data(data, puuid):
